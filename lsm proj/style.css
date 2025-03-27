@@ -32,9 +32,9 @@ body {
     height: auto; /* Maintain aspect ratio */
     border-radius: 50%; /* Optional: Make the logo circular */
     margin-top: -78px;   
-    margin-left: -1110px; 
+    margin-left: -1347px; 
     position: absolute;
-
+    
 }   
 .wrapper {
     width: 460px;
@@ -169,3 +169,51 @@ body {
         padding: 20px;
     }
 }
+
+/*--------register------------*/
+
+/* Add these to your existing CSS */
+
+.terms {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14.5px;
+    margin: -15px 0 15px;
+  }
+  
+  .terms label {
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .terms label input {
+    accent-color: #333;
+    margin-right: 3px;
+  }
+  
+  .login-link {
+    font-size: 14.5px;
+    text-align: center;
+    margin: 20px 0 15px;
+  }
+  
+  .login-link p a {
+    color: #333;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  
+  .login-link p a:hover {
+    text-decoration: underline;
+  }
+
+  .error-message {
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+  }
+  
+  .input-box {
+    position: relative;
+    margin-bottom: 10px;
+  }
