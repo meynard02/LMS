@@ -21,6 +21,11 @@ function login() {
         // Correct path to adminHP.html inside the admin folder
         window.location.href = "../admin/adminHP/adminHP.html"; 
         return false; // Prevent form submission
+    } else if (username === 'user' && password === 'user') {
+        // Redirect to adminHP.html
+        window.location.href = "../user/user.html";
+        return false; // Prevent form submission
+    
     } else {
         alert('Incorrect username or password');
         return false; // Prevent form submission
