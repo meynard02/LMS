@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookKeeper</title>
+    <link rel="stylesheet" href="user.css">
+</head>
+<body>
+    <div class="main-content">
+        <header class="header">
+            <h1>BookKeeper</h1>
+            <nav class="nav-links" id="navLinks">
+                <a href="#">Home</a>
+                <a href="#">Notification</a>
+            </nav>
+            <div class="hamburger-menu" onclick="toggleMenu()">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </header>
+
+        <div class="content-container">
+            <div class="search-group">
+                <input type="text" placeholder="Search">
+            </div>
+            
+            <div class="category-tabs">
+                <div class="category-tab science">Science</div>
+                <div class="category-tab filipino">Filipino</div>
+                <div class="category-tab pe">PE</div>
+                <div class="category-tab music">Music</div>
+                <div class="category-tab english">English</div>
+                <div class="category-tab ap">AP</div>
+                <div class="category-tab fiction">Fiction</div>
+                <div class="category-tab more">More...</div>
+            </div>
+        </div>
+    </div>
+    <!-- Add this right before </body> -->
+<div id="bookModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalTitle">Science Books</h2>
+        <div class="book-grid" id="bookGrid">
+            <!-- Books will be inserted here by JavaScript -->
+        </div>
+    </div>
+</div>
+
+    <script src="user.js"></script>
+</body>
+</html>
