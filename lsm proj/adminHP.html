@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>Library Management</title>
-<link rel="stylesheet" href="adminHP.css">
+    <link rel="stylesheet" href="adminHP.css">
 </head>
 
 <body>
@@ -16,11 +15,11 @@
         </div>
         <div class="menu">
             <ul class="nav-list">
-                <li><a href="#" onclick="alignRight(this)">Homepage</a></li>
-                <li><a href="#" onclick="alignRight(this)">User Management</a></li>
-                <li><a href="#" onclick="alignRight(this)">Book & Inventory Management</a></li>
-                <li><a href="#" onclick="alignRight(this)">Book Borrowing & Returning</a></li>
-                <li><a href="#" onclick="alignRight(this)">System Settings</a></li>
+                <li><a href="#" onclick="showContent('homepage')">Homepage</a></li>
+                <li><a href="#" onclick="showContent('user-management')">User Management</a></li>
+                <li><a href="#" onclick="showContent('inventory')">Book & Inventory Management</a></li>
+                <li><a href="#" onclick="showContent('borrowing')">Book Borrowing & Returning</a></li>
+                <li><a href="#" onclick="showContent('settings')">System Settings</a></li>
             </ul>
         </div>
         <div class="logout">
@@ -39,6 +38,15 @@
             </div>
         </div>
 
+        <!-- Content Panel -->
+        <div class="content-panel" id="contentPanel">
+            <div class="panel-content" id="panelContent">
+                <div class="welcome-message">
+                    <h2>Welcome to Library Management System</h2>
+                    <p>Select a menu item from the navigation to begin</p>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="adminHP.js"></script>
 </body>
