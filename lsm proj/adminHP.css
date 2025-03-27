@@ -1,15 +1,18 @@
 body {
-    
     font-family: "arial", sans-serif;
     margin: 0;
     padding: 0;
     display: flex;
 }
 
+
+/*---------sidebar------------------------*/
+
+
 .sidebar {
     background-attachment: fixed;
     background: url(bg.jpeg);
-    background-blend-mode:soft-light;
+    background-blend-mode: soft-light;
     width: 250px;
     height: 93vh;
     background-color: #a1ada4;
@@ -21,13 +24,10 @@ body {
     padding: 20px 10px;
 }
 
-/*---------------- left top name logo---------------*/
-
 .logo {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
-    
 }
 
 .logo img {
@@ -41,29 +41,22 @@ body {
     font-size: 20px;
     font-weight: bold;
     display: inline-block;
-  animation: float 2s ease-in-out infinite; /* Infinite loop */
+    animation: float 2s ease-in-out infinite;
 }
 
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px); /* Moves up halfway */
-  }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
 }
-
 
 span:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.075); /* Soft shadow */
-  } 
-
-/*---------------- left top name logo---------------*/
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.075);
+}
 
 
+/*---------"buttons" on the side------------------------*/
 
-/*---------------- navigations ---------------*/
 .menu {
     flex-grow: 1;
     display: flex;
@@ -75,7 +68,6 @@ span:hover {
 .nav-list {
     list-style: none;
     padding: 0;
-    
 }
 
 .nav-list li {
@@ -90,20 +82,20 @@ span:hover {
     padding: 10px;
     background-color: #036d2b;
     border-radius: 5px;
-    text-align: left; /* Default alignment */
-    transition: transform 0.3s ease, box-shadow 0.3s ease, text-align 0.3s ease;
+    text-align: left;
+    transition: all 0.3s ease;
 }
 
 .nav-list a:hover {
     background-color: #409c62;
-    color: white;
     transform: translateY(-5px);
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.284);
 }
 
 .nav-list a.active {
     text-align: right;
-    background-color: #024a1f; /* Darker shade for active state */
+    background-color: #a2e990;
+    color: rgb(0, 0, 0);
 }
 
 .logout {
@@ -114,41 +106,39 @@ span:hover {
     text-decoration: none;
     color: white;
     font-size: 16px;
-    display: block;
     padding: 10px;
-    background-color: #036d2b; /* Background color for logout button */
+    background-color: #036d2b;
     border-radius: 5px;
     display: inline-block;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-
+    transition: all 0.3s ease;
 }
 
 .logout a:hover {
     background-color: #98c4ca;
-    color: white;
     transform: translateY(-5px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
 }
-/*---------------- navigations ---------------*/
+
+
+/*--------- Top header ------------------------*/
 
 .main-content {
-    margin-left: 250px; /* Offset the sidebar width */
+    margin-left: 250px;
     padding: 20px;
     flex-grow: 1;
     background: url(bg.jpeg);
-    background-color: #f4f4f4; /* Light background for contrast */
-    height: 100vh;
+    background-color: #f4f4f4;
+    min-height: 100vh;
 }
 
 .header {
     display: flex;
-    justify-content:space-between;
+    justify-content: space-between;
     align-items: center;
     background-color: #036d2c;
     color: white;
     padding: 10px;
     border-radius: 10px;
-    width: auto;
 }
 
 .header h1 {
@@ -163,23 +153,66 @@ span:hover {
     font-size: 14px;
 }
 
-.content {
+/*----------------Content Panel Styles-------------------------------*/
+.content-panel {
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
     margin-top: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    min-height: 70vh;
 }
 
-.content h2 {
+.panel-content {
+    height: 100%;
+    transition: opacity 0.3s ease;
+}
+
+.welcome-message {
+    text-align: center;
+    padding: 50px 0;
     color: #036d2b;
 }
 
-.card {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    margin-bottom: 20px;
+.content-section {
+    height: 100%;
 }
-.nav-list a.active {
-background-color: #00bcd4; /* Highlight color */
-color: white;
+
+.section-header {
+    margin-bottom: 30px;
+}
+
+.section-indicator {
+    color: #036d2b;
+    font-weight: bold;
+    padding: 5px 15px;
+    background-color: #e8f5e9;
+    border-radius: 5px;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+.section-divider {
+    height: 2px;
+    background: linear-gradient(to right, #036d2b, transparent);
+    margin: 15px 0;
+    border-radius: 2px;
+}
+
+.content-section h2 {
+    color: #333;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.content-section p {
+    color: #555;
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
