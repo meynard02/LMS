@@ -1,36 +1,26 @@
-const togglePassword = document.querySelector("#togglePassword");
-const password = document.querySelector("#password");
-
-// Password visibility toggle
-togglePassword.addEventListener("click", function () {
-    // Toggle the type attribute
-    const type = password.getAttribute("type") === "password" ? "text" : "password";
-    password.setAttribute("type", type);
-
-    // Toggle the eye icon
-    this.classList.toggle("bx-hide");
-    this.classList.toggle("bx-show");
-});
-
-// Login function (moved outside)
-function login() {
-    var username = document.getElementById('username').value;
-    var password = document.getElementById('password').value;
-
-    if (username === 'admin' && password === 'admin') {
-        // Correct path to adminHP.html inside the admin folder
-        window.location.href = "../admin/adminHP/adminHP.html"; 
-        return false; // Prevent form submission
-    } else if (username === 'user' && password === 'user') {
-        // Redirect to adminHP.html
-        window.location.href = "../user/user.html";
-        return false; // Prevent form submission
+document.addEventListener('DOMContentLoaded', function() {
+    const togglePassword = document.querySelector("#togglePassword");
+    const passwordInput = document.querySelector("#password");
     
-    } else {
-        alert('Incorrect username or password');
-        return false; // Prevent form submission
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener("click", function() {
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+            this.classList.toggle("bx-hide");
+            this.classList.toggle("bx-show");
+        });
     }
-}
 
-
-
+    const loginForm = document.getElementById("login-form");
+    if (loginForm) {
+        loginForm.addEventListener("submit", function(e) {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            if (!username || !password) {
+                e.preventDefault();
+                alert('Please enter both username and password');
+            }
+        });
+    }
+});

@@ -6,10 +6,10 @@
 }
 
 body {
-    background: url(../../logophotos/bg.jpeg) no-repeat;
+    background: url(../photos/bg.jpeg) no-repeat;
     background-size: cover;
     background-position: center;
-    min-height: 100vh;
+    min-height: 150vh;
     margin: 0;
     padding-top: 80px;
 }
@@ -21,7 +21,7 @@ body {
 }
 
 .header {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
@@ -62,31 +62,36 @@ body {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-.hamburger-menu {
-    display: none;
-    cursor: pointer;
+.nav-links a.active {
+    position: relative;
 }
 
-.hamburger-menu .bar {
-    width: 25px;
+.nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
     height: 3px;
     background-color: white;
-    margin: 5px 0;
-    transition: 0.4s;
+    border-radius: 3px;
 }
 
 .content-container {
     background-color: rgba(255, 255, 255, 0.9);
     border-radius: 10px;
-    padding: 325px;
-    margin: 50px -75px;
+    padding: 20px;
+    margin: 50px 0;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 1350px;
+    width:auto;
+    max-width: 100%;
 }
 
 .search-group {
     display: flex;
-    margin-top: -270px;
+    margin-top: 20px;
+    width: 600px;
+    margin-left: 280px;
 }
 
 .search-group input {
@@ -104,7 +109,7 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin: 50px;
+    margin: 20px 268px;
 }
 
 .category-tab {
@@ -122,7 +127,7 @@ body {
     transform: translateY(-2px);
 }
 
-/* Subject-specific colors - only addition to your original CSS */
+/* Subject-specific colors */
 .science { background-color: #3498db; }
 .filipino { background-color: #e74c3c; }
 .pe { background-color: #2ecc71; }
@@ -135,37 +140,64 @@ body {
     border: 2px dashed rgba(255,255,255,0.5);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .nav-links {
-        display: none;
-        position: absolute;
-        top: 70px;
-        right: 20px;
-        background-color: #000;
-        flex-direction: column;
-        padding: 15px;
-        border-radius: 5px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .nav-links.active {
-        display: flex;
-    }
-
-    .hamburger-menu {
-        display: block;
-    }
-
-    .header {
-        padding: 10px 15px;
-    }
-
-    .content-container {
-        margin-top: 80px;
-        padding: 15px;
-    }
+/* Content Panel Styles */
+.content-panel {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    animation: fadeIn 0.3s ease-out;
+    min-height: 100vh;
 }
+
+.content-panel.active {
+    display: block;
+}
+
+.panel-content {
+    position: relative;
+}
+
+.content-section {
+    padding: 20px;
+}
+
+.section-header {
+    margin-bottom: 30px;
+}
+
+.section-indicator {
+    color: #036d2b;
+    font-weight: bold;
+    padding: 5px 15px;
+    background-color: #e8f5e9;
+    border-radius: 5px;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+.section-divider {
+    height: 2px;
+    background: linear-gradient(to right, #036d2b, transparent);
+    margin: 15px 0;
+    border-radius: 2px;
+}
+
+.content-section h2 {
+    color: #333;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.content-section p {
+    color: #555;
+    line-height: 1.6;
+    font-size: 16px;
+}
+
 /* Modal Styles */
 .modal {
     display: none;
@@ -249,4 +281,31 @@ body {
 .book-author {
     font-size: 14px;
     color: #666;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header {
+        padding: 10px 15px;
+        margin: 20px auto;
+    }
+
+    .content-container {
+        margin-top: 30px;
+        padding: 15px;
+    }
+
+    .category-tabs {
+        margin: 20px 0;
+    }
+    
+    .content-panel {
+        padding: 15px;
+    }
 }
