@@ -4,15 +4,10 @@ include '../php/connection.php';
 
 $error = "";
 
-if (empty($_SESSION['register_email'])) {
-    header("Location: ../register/register.php");
-    exit();
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $otp = $_POST['otp'];
-    $email = $_SESSION['register_email'];
-
+    $email = $_SESSION['register_email'] ?? ''; // Email stored during registration
+    
     if (empty($otp)) {
         $error = "Please enter the OTP";
     } else {
@@ -24,20 +19,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result = $stmt->get_result();
         
         if ($result->num_rows > 0) {
-            // OTP is valid, complete registration
+            // OTP is valid, update user as verified
             $updateSql = "UPDATE user SET is_verified = 1, OTP = NULL WHERE Email = ?";
             $updateStmt = $conn->prepare($updateSql);
             $updateStmt->bind_param("s", $email);
             
             if ($updateStmt->execute()) {
-                // Clear session data
-                unset($_SESSION['register_email']);
-                unset($_SESSION['register_data']);
-                
                 header("Location: ../login/index.php?verified=1");
                 exit();
             } else {
-                $error = "Error completing registration";
+                $error = "Error updating verification status";
             }
         } else {
             $error = "Invalid OTP. Please try again.";
