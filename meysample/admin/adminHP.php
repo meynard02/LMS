@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management - Admin Dashboard</title>
+    <link rel="stylesheet" href="../admin/adminHP.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="../photos/logo.jpg" alt="Library Logo">
+            <div class="logo-text">
+                <span class="logo-title">The BookKeeper</span>
+                <span class="logo-subtitle">Admin Panel</span>
+            </div>
+        </div>
+        
+        <div class="menu">
+            <div class="user-profile">
+                <img src="../photos/alrashid.jpg" alt="User Avatar" class="user-avatar">
+                <div class="user-info">
+                    <span class="user-name">Admin User</span>
+                    <span class="user-role">Administrator</span>
+                </div>
+            </div>
+            
+            <ul class="nav-list">
+                <li>
+                    <a href="#" onclick="showContent('homepage')">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showPasswordModal()">
+                        <i class="fas fa-users-cog"></i>
+                        <span>User Management</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showContent('inventory')">
+                        <i class="fas fa-book"></i>
+                        <span>Inventory</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showContent('borrowing')">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Borrowing/Returns</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showContent('settings')">
+                        <i class="fas fa-cog"></i>
+                        <span>System Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="logout">
+            <a href="#" onclick="confirmLogout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="header-left">
+                <h1>Library Management System</h1>
+                <p class="institution">Southern Philippines Institute of Science & Technology</p>
+            </div>
+            <div class="header-right">
+                <div class="datetime">
+                    <i class="far fa-calendar-alt"></i>
+                    <span id="datetime"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-panel" id="contentPanel">
+            <div class="panel-content" id="panelContent">
+                <div class="welcome-message">
+                    <div class="welcome-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h2>Welcome to Library Management System</h2>
+                    <p>Select a menu item from the navigation to begin managing your library</p>
+                    <div class="quick-stats">
+                        <div class="stat-card">
+                            <i class="fas fa-users"></i>
+                            <h3>1,245</h3>
+                            <p>Active Users</p>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-book"></i>
+                            <h3>8,752</h3>
+                            <p>Books in Collection</p>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-clock"></i>
+                            <h3>127</h3>
+                            <p>Overdue Books</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('passwordModal')">&times;</span>
+            <h2>Enter Admin Password</h2>
+            <p>Please enter the admin password to access user management:</p>
+            <input type="password" id="adminPassword" placeholder="Enter password">
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeModal('passwordModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="verifyPassword()">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Type Selection Modal -->
+    <div id="userTypeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('userTypeModal')">&times;</span>
+            <h2>Select User Type to Manage</h2>
+            <div class="user-type-options">
+                <button class="user-type-btn" onclick="showUserManagement('students')">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>Student Management</span>
+                </button>
+                <button class="user-type-btn" onclick="showUserManagement('admins')">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin Management</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Management Modal -->
+    <div id="inventoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('inventoryModal')">&times;</span>
+            <h2>Edit Book Information</h2>
+            <form id="editBookForm">
+                <input type="hidden" id="editBookId">
+                <div class="form-group">
+                    <label for="editAccessionNo">Accession No.</label>
+                    <input type="text" id="editAccessionNo" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTitle">Book Title</label>
+                    <input type="text" id="editTitle" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAuthor">Author</label>
+                    <input type="text" id="editAuthor" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAvailability">Availability</label>
+                    <select id="editAvailability" class="form-control" required>
+                        <option value="Available">Available</option>
+                        <option value="Checked Out">Checked Out</option>
+                        <option value="On Hold">On Hold</option>
+                        <option value="Lost">Lost</option>
+                    </select>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('inventoryModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../admin/adminHP.js"></script>
+</body>
+</html>
