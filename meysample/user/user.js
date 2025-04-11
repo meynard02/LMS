@@ -7,6 +7,21 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Setup profile panel interactions
     setupProfilePanel();
+    
+    // Setup notification bell animation
+    setupNotificationBell();
+    
+    // Setup password strength meter
+    setupPasswordStrengthMeter();
+    
+    // Setup clear notifications button
+    setupClearNotifications();
+    
+    // Setup book borrowing functionality
+    setupBookBorrowing();
+    
+    // Setup search functionality
+    setupSearch();
 });
 
 // Panel switching functionality
@@ -41,37 +56,131 @@ function showPanel(panelName) {
     if (activeTab) {
         activeTab.classList.add('active');
     }
+    
+    // Update pending borrows display if on that panel
+    if (panelName === 'borrows') {
+        updatePendingBorrowsDisplay();
+    }
 }
 
 // Book data and functionality
 function initializeBookData() {
-    // Sample book data for each subject
-    const bookData = {
+    // Sample book data for each subject with more details
+    const detailedBookData = {
         science: [
-            { title: "Physics Fundamentals", author: "Dr. Marie Curie", cover: "physics.jpg" },
-            { title: "Biology Today", author: "Charles Darwin", cover: "biology.jpg" }
+            { 
+                title: "Physics Fundamentals", 
+                author: "Dr. Marie Curie", 
+                cover: "physics.jpg",
+                genre: "Science, Physics",
+                description: "A comprehensive introduction to the fundamental principles of physics.",
+                year: "2021",
+                pages: "450",
+                language: "English",
+                isbn: "978-0123456789"
+            },
+            { 
+                title: "Biology Today", 
+                author: "Charles Darwin", 
+                cover: "biology.jpg",
+                genre: "Science, Biology",
+                description: "Explore the fascinating world of living organisms.",
+                year: "2020",
+                pages: "380",
+                language: "English",
+                isbn: "978-0987654321"
+            }
         ],
         filipino: [
-            { title: "Noli Me Tangere", author: "José Rizal", cover: "noli.jpg" },
-            { title: "El Filibusterismo", author: "José Rizal", cover: "fili.jpg" }
+            { 
+                title: "Noli Me Tangere", 
+                author: "José Rizal", 
+                cover: "noli.jpg",
+                genre: "Literature, Historical",
+                description: "A novel exposing the abuses of the Spanish colonial government.",
+                year: "1887",
+                pages: "480",
+                language: "Filipino",
+                isbn: "978-1234567890"
+            }
         ],
         pe: [
-            { title: "Sports Science", author: "John Doe", cover: "sports.jpg" }
+            { 
+                title: "Sports Science", 
+                author: "John Doe", 
+                cover: "sports.jpg",
+                genre: "Physical Education",
+                description: "Understanding scientific principles behind athletic performance.",
+                year: "2020",
+                pages: "280",
+                language: "English",
+                isbn: "978-4567890123"
+            }
         ],
         music: [
-            { title: "Music Theory", author: "Beethoven", cover: "music-theory.jpg" }
+            { 
+                title: "Music Theory", 
+                author: "Beethoven", 
+                cover: "music-theory.jpg",
+                genre: "Music, Education",
+                description: "Fundamental concepts of music theory.",
+                year: "2018",
+                pages: "240",
+                language: "English",
+                isbn: "978-6789012345"
+            }
         ],
         english: [
-            { title: "Shakespeare's Works", author: "William Shakespeare", cover: "shakespeare.jpg" }
+            { 
+                title: "Shakespeare's Works", 
+                author: "William Shakespeare", 
+                cover: "shakespeare.jpg",
+                genre: "Literature, Drama",
+                description: "Complete collection of plays and sonnets.",
+                year: "2020",
+                pages: "1200",
+                language: "English",
+                isbn: "978-8901234567"
+            }
         ],
         ap: [
-            { title: "World History", author: "Howard Zinn", cover: "history.jpg" }
+            { 
+                title: "World History", 
+                author: "Howard Zinn", 
+                cover: "history.jpg",
+                genre: "History, Education",
+                description: "A people's history of the world.",
+                year: "2015",
+                pages: "720",
+                language: "English",
+                isbn: "978-0123456789"
+            }
         ],
         fiction: [
-            { title: "Harry Potter", author: "J.K. Rowling", cover: "harry-potter.jpg" }
+            { 
+                title: "Harry Potter", 
+                author: "J.K. Rowling", 
+                cover: "harry-potter.jpg",
+                genre: "Fiction, Fantasy",
+                description: "The story of a young wizard's adventures.",
+                year: "1997",
+                pages: "320",
+                language: "English",
+                isbn: "978-2345678901"
+            }
         ],
         more: [
-            { title: "More Books Coming Soon", author: "", cover: "" }
+            { 
+                title: "More Books Coming Soon", 
+                author: "", 
+                cover: "",
+                genre: "Various",
+                description: "Check back soon for more options!",
+                year: "",
+                pages: "",
+                language: "",
+                isbn: ""
+            }
         ]
     };
 
@@ -86,16 +195,32 @@ function initializeBookData() {
         bookGrid.innerHTML = "";
         
         // Get books for this category or show empty message
-        const books = bookData[category] || [
-            { title: "No books available", author: "", cover: "" }
+        const books = detailedBookData[category] || [
+            { 
+                title: "No books available", 
+                author: "", 
+                cover: "",
+                genre: "",
+                description: "",
+                year: "",
+                pages: "",
+                language: "",
+                isbn: ""
+            }
         ];
         
         // Add books to the grid
         books.forEach(book => {
             const bookCard = document.createElement("div");
             bookCard.className = "book-card";
+            
+            // Use icon if no cover image
+            const coverContent = book.cover 
+                ? `<div class="book-cover" style="background-image: url('../books/${book.cover}')"></div>`
+                : `<div class="book-cover"><i class="fas fa-book book-icon"></i></div>`;
+            
             bookCard.innerHTML = `
-                <div class="book-cover" style="background-image: url('books/${book.cover}')"></div>
+                ${coverContent}
                 <div class="book-title">${book.title}</div>
                 <div class="book-author">${book.author}</div>
             `;
@@ -111,6 +236,193 @@ function initializeBookData() {
         });
         document.querySelector(`.category-tab.${category}`).classList.add('active-tab');
     };
+}
+
+// Book Borrowing Functionality
+function setupBookBorrowing() {
+    // Store pending borrows in localStorage
+    let pendingBorrows = JSON.parse(localStorage.getItem('pendingBorrows')) || [];
+    
+    // Open book details modal when a book is clicked
+    document.addEventListener('click', function(e) {
+        const bookCard = e.target.closest('.book-card');
+        if (bookCard) {
+            const bookTitle = bookCard.querySelector('.book-title').textContent;
+            const category = document.querySelector('.category-tab.active-tab').className.replace('category-tab ', '').replace(' active-tab', '');
+            
+            // Find the book in our detailed data
+            const book = initializeBookData.detailedBookData[category].find(b => b.title === bookTitle) || {
+                title: bookTitle,
+                author: bookCard.querySelector('.book-author').textContent,
+                cover: '',
+                genre: 'Unknown',
+                description: 'No description available for this book.',
+                year: 'Unknown',
+                pages: 'Unknown',
+                language: 'Unknown',
+                isbn: 'Unknown'
+            };
+            
+            showBookDetails(book);
+        }
+    });
+    
+    // Function to show book details in modal
+    function showBookDetails(book) {
+        document.getElementById('modal-book-title').textContent = book.title;
+        document.getElementById('modal-book-author').textContent = book.author;
+        document.getElementById('modal-book-genre').textContent = book.genre;
+        document.getElementById('modal-book-description').textContent = book.description;
+        document.getElementById('modal-book-year').textContent = book.year;
+        document.getElementById('modal-book-pages').textContent = book.pages;
+        document.getElementById('modal-book-language').textContent = book.language;
+        document.getElementById('modal-book-isbn').textContent = book.isbn;
+        
+        // Set book cover
+        const coverElement = document.getElementById('modal-book-cover');
+        if (book.cover) {
+            coverElement.style.backgroundImage = `url('../books/${book.cover}')`;
+            coverElement.innerHTML = '';
+        } else {
+            coverElement.style.backgroundImage = '';
+            coverElement.innerHTML = '<i class="fas fa-book book-icon"></i>';
+        }
+        
+        // Set up borrow button
+        const borrowBtn = document.getElementById('borrow-btn');
+        const isAlreadyBorrowed = pendingBorrows.some(b => b.title === book.title);
+        
+        if (isAlreadyBorrowed) {
+            borrowBtn.disabled = true;
+            borrowBtn.innerHTML = '<i class="fas fa-check-circle"></i> Already Requested';
+        } else {
+            borrowBtn.disabled = false;
+            borrowBtn.innerHTML = '<i class="fas fa-bookmark"></i> Borrow Book';
+            borrowBtn.onclick = function() {
+                borrowBook(book);
+            };
+        }
+        
+        // Show modal
+        document.getElementById('book-details-modal').style.display = 'block';
+    }
+    
+    // Function to handle book borrowing
+    function borrowBook(book) {
+        const borrowDate = new Date();
+        const dueDate = new Date();
+        dueDate.setDate(borrowDate.getDate() + 14); // 2 weeks from now
+        
+        const newBorrow = {
+            title: book.title,
+            author: book.author,
+            cover: book.cover,
+            borrowDate: borrowDate.toISOString(),
+            dueDate: dueDate.toISOString(),
+            status: "Pending Approval"
+        };
+        
+        pendingBorrows.push(newBorrow);
+        localStorage.setItem('pendingBorrows', JSON.stringify(pendingBorrows));
+        
+        // Update UI
+        document.getElementById('borrow-btn').disabled = true;
+        document.getElementById('borrow-btn').innerHTML = '<i class="fas fa-check-circle"></i> Request Sent';
+        
+        // Update borrows badge
+        updateBorrowsBadge();
+        
+        // Show success message
+        showToast(`Borrow request for "${book.title}" submitted!`, 'success');
+        
+        // Update pending borrows display if on that panel
+        if (document.getElementById('borrows-panel').classList.contains('active')) {
+            updatePendingBorrowsDisplay();
+        }
+    }
+    
+    // Function to update pending borrows display
+    window.updatePendingBorrowsDisplay = function() {
+        const container = document.getElementById('pending-borrows');
+        const noBorrowsMessage = document.getElementById('no-borrows-message');
+        
+        // Clear existing borrows
+        const existingBorrows = container.querySelectorAll('.borrow-item');
+        existingBorrows.forEach(borrow => borrow.remove());
+        
+        // Show message if no borrows
+        if (pendingBorrows.length === 0) {
+            noBorrowsMessage.style.display = 'block';
+            return;
+        }
+        
+        noBorrowsMessage.style.display = 'none';
+        
+        // Add each pending borrow
+        pendingBorrows.forEach((borrow, index) => {
+            const borrowElement = document.createElement('div');
+            borrowElement.className = 'borrow-item';
+            
+            // Format dates
+            const borrowDate = new Date(borrow.borrowDate).toLocaleDateString();
+            const dueDate = new Date(borrow.dueDate).toLocaleDateString();
+            
+            borrowElement.innerHTML = `
+                <div class="borrow-cover" style="${borrow.cover ? `background-image: url('../books/${borrow.cover}')` : ''}">
+                    ${!borrow.cover ? '<i class="fas fa-book book-icon"></i>' : ''}
+                </div>
+                <div class="borrow-info">
+                    <div class="borrow-title">${borrow.title}</div>
+                    <div class="borrow-author">${borrow.author}</div>
+                    <div class="borrow-meta">
+                        <span class="borrow-date"><i class="far fa-calendar-alt"></i> Borrowed: ${borrowDate}</span>
+                        <span class="borrow-date"><i class="far fa-calendar-check"></i> Due: ${dueDate}</span>
+                        <span class="borrow-status"><i class="fas fa-hourglass-half"></i> ${borrow.status}</span>
+                    </div>
+                </div>
+                <button class="cancel-borrow" data-index="${index}">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            `;
+            
+            container.appendChild(borrowElement);
+        });
+        
+        // Add event listeners to cancel buttons
+        document.querySelectorAll('.cancel-borrow').forEach(button => {
+            button.addEventListener('click', function() {
+                const index = parseInt(this.getAttribute('data-index'));
+                cancelBorrow(index);
+            });
+        });
+    }
+    
+    // Function to cancel a borrow request
+    function cancelBorrow(index) {
+        const bookTitle = pendingBorrows[index].title;
+        pendingBorrows.splice(index, 1);
+        localStorage.setItem('pendingBorrows', JSON.stringify(pendingBorrows));
+        
+        // Update borrows badge
+        updateBorrowsBadge();
+        
+        showToast(`Borrow request for "${bookTitle}" cancelled`, 'info');
+        updatePendingBorrowsDisplay();
+    }
+    
+    // Function to update borrows badge count
+    function updateBorrowsBadge() {
+        const badge = document.getElementById('borrows-badge');
+        if (pendingBorrows.length > 0) {
+            badge.textContent = pendingBorrows.length;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+    
+    // Initialize borrows badge
+    updateBorrowsBadge();
 }
 
 // Profile Panel Functionality
@@ -158,6 +470,10 @@ function setupProfilePanel() {
         document.getElementById('new-password').value = '';
         document.getElementById('confirm-password').value = '';
         
+        // Reset strength meter
+        document.querySelector('.strength-bar').style.width = '0';
+        document.querySelector('.strength-bar').style.backgroundColor = '#e74c3c';
+        
         // Show modal
         changePasswordModal.style.display = 'block';
     });
@@ -167,6 +483,7 @@ function setupProfilePanel() {
         button.addEventListener('click', function() {
             editProfileModal.style.display = 'none';
             changePasswordModal.style.display = 'none';
+            document.getElementById('book-details-modal').style.display = 'none';
         });
     });
 
@@ -183,13 +500,13 @@ function setupProfilePanel() {
         
         // Validate email
         if (!validateEmail(newEmail)) {
-            alert('Please enter a valid email address!');
+            showToast('Please enter a valid email address!', 'error');
             return;
         }
         
         // Validate names
         if (!newFirstname || !newLastname) {
-            alert('First name and last name cannot be empty!');
+            showToast('First name and last name cannot be empty!', 'error');
             return;
         }
         
@@ -206,7 +523,8 @@ function setupProfilePanel() {
         // Close modal
         editProfileModal.style.display = 'none';
         
-        alert('Profile updated successfully!');
+        // Show success message
+        showToast('Profile updated successfully!', 'success');
     });
 
     // Cancel Password Button
@@ -222,19 +540,24 @@ function setupProfilePanel() {
         
         // Validate passwords
         if (!currentPassword) {
-            alert('Please enter your current password!');
+            showToast('Please enter your current password!', 'error');
             return;
         }
         
-        if (!newPassword || newPassword !== confirmPassword) {
-            alert('New passwords do not match or are empty!');
+        if (!newPassword || newPassword.length < 8) {
+            showToast('Password must be at least 8 characters!', 'error');
+            return;
+        }
+        
+        if (newPassword !== confirmPassword) {
+            showToast('New passwords do not match!', 'error');
             return;
         }
         
         // Here you would typically send the data to the server
         // For now, we'll just show a success message
         changePasswordModal.style.display = 'none';
-        alert('Password changed successfully!');
+        showToast('Password changed successfully!', 'success');
     });
 
     // Close modal when clicking outside
@@ -245,6 +568,9 @@ function setupProfilePanel() {
         if (event.target === changePasswordModal) {
             changePasswordModal.style.display = 'none';
         }
+        if (event.target === document.getElementById('book-details-modal')) {
+            document.getElementById('book-details-modal').style.display = 'none';
+        }
     });
 
     // Email validation helper
@@ -254,9 +580,166 @@ function setupProfilePanel() {
     }
 }
 
+// Notification bell animation
+function setupNotificationBell() {
+    const notificationBell = document.querySelector('.notification-link i');
+    
+    notificationBell.addEventListener('click', function(e) {
+        // Prevent triggering both the click and the panel change
+        e.stopPropagation();
+        
+        // Add temporary animation class
+        this.classList.add('ringing');
+        
+        // Remove animation class after it completes
+        setTimeout(() => {
+            this.classList.remove('ringing');
+        }, 1500);
+        
+        // Mark notifications as read
+        document.querySelectorAll('.notification-item.unread').forEach(item => {
+            item.classList.remove('unread');
+        });
+        
+        // Update badge count
+        document.querySelector('.notification-badge').textContent = '0';
+    });
+}
+
+// Password strength meter
+function setupPasswordStrengthMeter() {
+    const newPasswordInput = document.getElementById('new-password');
+    const strengthBar = document.querySelector('.strength-bar');
+    
+    newPasswordInput.addEventListener('input', function() {
+        const password = this.value;
+        let strength = 0;
+        
+        // Length check
+        if (password.length >= 8) strength += 1;
+        if (password.length >= 12) strength += 1;
+        
+        // Complexity checks
+        if (/[A-Z]/.test(password)) strength += 1;
+        if (/[0-9]/.test(password)) strength += 1;
+        if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+        
+        // Update strength bar
+        const width = (strength / 5) * 100;
+        strengthBar.style.width = `${width}%`;
+        
+        // Update color based on strength
+        if (strength <= 2) {
+            strengthBar.style.backgroundColor = '#e74c3c'; // Red
+        } else if (strength <= 4) {
+            strengthBar.style.backgroundColor = '#f39c12'; // Orange
+        } else {
+            strengthBar.style.backgroundColor = '#2ecc71'; // Green
+        }
+    });
+}
+
+// Clear notifications
+function setupClearNotifications() {
+    const clearBtn = document.getElementById('clear-notifications-btn');
+    
+    clearBtn.addEventListener('click', function() {
+        const notificationsList = document.querySelector('.notifications-list');
+        notificationsList.innerHTML = '<p class="no-notifications">No notifications available</p>';
+        document.querySelector('.notification-badge').textContent = '0';
+        showToast('All notifications cleared', 'success');
+    });
+}
+
+// Search functionality
+function setupSearch() {
+    const searchInput = document.getElementById('book-search');
+    
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const bookCards = document.querySelectorAll('.book-card');
+        
+        bookCards.forEach(card => {
+            const title = card.querySelector('.book-title').textContent.toLowerCase();
+            const author = card.querySelector('.book-author').textContent.toLowerCase();
+            
+            if (title.includes(searchTerm) || author.includes(searchTerm)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+}
+
+// Toggle password visibility
+window.togglePassword = function(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = input.nextElementSibling;
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+// Show toast notification
+function showToast(message, type) {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i> ${message}`;
+    document.getElementById('toast-container').appendChild(toast);
+    
+    // Show toast
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+    
+    // Hide after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 3000);
+}
+
+// Confirm logout
 function confirmLogout() {
-    if (confirm("Are you sure you want to logout?")) {
-        window.location.href = "../login/index.php";
+    const confirmLogout = confirm("Are you sure you want to logout?");
+    if (confirmLogout) {
+        // Show loading state
+        document.body.style.opacity = '0.5';
+        document.querySelector('.main-content').innerHTML = '<div class="logout-loading"><i class="fas fa-spinner fa-spin"></i> Logging out...</div>';
+        
+        // Simulate logout process
+        setTimeout(() => {
+            window.location.href = "../login/index.php";
+        }, 1000);
     }
     return false;
 }
+
+// Make the detailedBookData available globally
+initializeBookData.detailedBookData = {
+    science: [
+        { 
+            title: "Physics Fundamentals", 
+            author: "Dr. Marie Curie", 
+            cover: "physics.jpg",
+            genre: "Science, Physics",
+            description: "A comprehensive introduction to the fundamental principles of physics.",
+            year: "2021",
+            pages: "450",
+            language: "English",
+            isbn: "978-0123456789"
+        },
+        // ... other books ...
+    ],
+    // ... other categories ...
+};
