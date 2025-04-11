@@ -182,6 +182,38 @@
         </div>
     </div>
 
+    <!-- Borrowing Management Modal -->
+    <div id="borrowingModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('borrowingModal')">&times;</span>
+            <h2>Update Borrowing Status</h2>
+            <form id="updateBorrowingForm">
+                <input type="hidden" id="borrowingId">
+                <div class="form-group">
+                    <label for="borrowingStatus">Status</label>
+                    <select id="borrowingStatus" class="form-control" required>
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Returned">Returned</option>
+                        <option value="Overdue">Overdue</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dueDate">Due Date</label>
+                    <input type="date" id="dueDate" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="returnDate">Return Date</label>
+                    <input type="date" id="returnDate" class="form-control">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('borrowingModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../admin/adminHP.js"></script>
 </body>
