@@ -751,3 +751,48 @@ body {
         justify-content: center;
     }
 }
+
+/* Add these to your existing CSS file */
+
+/* Borrowing Status Badges */
+.badge-primary {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+/* Filter Options */
+.filter-options select {
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid var(--medium-gray);
+    background-color: var(--white);
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.filter-options select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(3, 109, 44, 0.2);
+}
+
+/* Loading State */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: var(--primary-color);
+}
+
+.loading-state i {
+    font-size: 40px;
+    margin-bottom: 15px;
+}
+
+.loading-state p {
+    font-size: 16px;
+}
+
+
