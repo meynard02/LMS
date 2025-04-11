@@ -1075,6 +1075,291 @@ function showAddBookModal() {
     document.getElementById('inventoryModal').style.display = 'block';
 }
 
+// Borrowing Management Functions
+let currentBorrowings = [];
+let currentBorrowingPage = 1;
+const borrowingsPerPage = 10;
+
+// Load borrowings from database (mock data for now)
+async function loadBorrowings() {
+    try {
+        // In a real application, you would fetch from your backend API
+        // const response = await fetch('/api/borrowings');
+        // currentBorrowings = await response.json();
+        
+        // Mock data for demonstration
+        currentBorrowings = [
+            { 
+                id: 1, 
+                bookTitle: 'Introduction to Computer Science', 
+                borrower: 'John Smith (jsmith@example.com)', 
+                borrowDate: '2023-05-15', 
+                dueDate: '2023-06-15', 
+                returnDate: '', 
+                status: 'Approved' 
+            },
+            { 
+                id: 2, 
+                bookTitle: 'Advanced JavaScript', 
+                borrower: 'Sarah Johnson (sjohnson@example.com)', 
+                borrowDate: '2023-05-20', 
+                dueDate: '2023-06-20', 
+                returnDate: '2023-06-18', 
+                status: 'Returned' 
+            },
+            { 
+                id: 3, 
+                bookTitle: 'Database Systems', 
+                borrower: 'Michael Brown (mbrown@example.com)', 
+                borrowDate: '2023-06-01', 
+                dueDate: '2023-07-01', 
+                returnDate: '', 
+                status: 'Overdue' 
+            },
+            { 
+                id: 4, 
+                bookTitle: 'Web Development', 
+                borrower: 'Emily Davis (edavis@example.com)', 
+                borrowDate: '2023-06-10', 
+                dueDate: '', 
+                returnDate: '', 
+                status: 'Pending' 
+            },
+            { 
+                id: 5, 
+                bookTitle: 'Data Structures', 
+                borrower: 'Robert Wilson (rwilson@example.com)', 
+                borrowDate: '2023-06-05', 
+                dueDate: '2023-07-05', 
+                returnDate: '', 
+                status: 'Approved' 
+            }
+        ];
+        
+        renderBorrowings();
+    } catch (error) {
+        console.error('Error loading borrowings:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: 'Failed to load borrowings. Please try again.',
+            icon: 'error',
+            confirmButtonColor: '#036d2b'
+        });
+    }
+}
+
+// Render borrowings to the table
+function renderBorrowings() {
+    const tableBody = document.getElementById('borrowingTableBody');
+    tableBody.innerHTML = '';
+    
+    // Pagination
+    const startIndex = (currentBorrowingPage - 1) * borrowingsPerPage;
+    const paginatedBorrowings = currentBorrowings.slice(startIndex, startIndex + borrowingsPerPage);
+    
+    // Update current page display
+    document.getElementById('currentBorrowingPage').textContent = currentBorrowingPage;
+    
+    // Populate table
+    paginatedBorrowings.forEach(borrowing => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+            <td>${borrowing.bookTitle}</td>
+            <td>${borrowing.borrower}</td>
+            <td>${borrowing.borrowDate}</td>
+            <td>${borrowing.dueDate || '-'}</td>
+            <td>${borrowing.returnDate || '-'}</td>
+            <td><span class="badge ${getBorrowingStatusBadgeClass(borrowing.status)}">${borrowing.status}</span></td>
+            <td>
+                <button class="btn-icon" onclick="editBorrowing(${borrowing.id})"><i class="fas fa-edit"></i></button>
+                <button class="btn-icon" onclick="confirmDeleteBorrowing(${borrowing.id})"><i class="fas fa-trash"></i></button>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+}
+
+// Get badge class based on borrowing status
+function getBorrowingStatusBadgeClass(status) {
+    switch(status) {
+        case 'Pending': return 'badge-warning';
+        case 'Approved': return 'badge-success';
+        case 'Returned': return 'badge-primary';
+        case 'Overdue': return 'badge-danger';
+        default: return 'badge-secondary';
+    }
+}
+
+// Search borrowings
+function searchBorrowings() {
+    const searchTerm = document.getElementById('searchBorrowings').value.toLowerCase();
+    
+    if (searchTerm === '') {
+        renderBorrowings();
+        return;
+    }
+    
+    const filteredBorrowings = currentBorrowings.filter(borrowing => 
+        borrowing.bookTitle.toLowerCase().includes(searchTerm) ||
+        borrowing.borrower.toLowerCase().includes(searchTerm) ||
+        borrowing.status.toLowerCase().includes(searchTerm)
+    );
+    
+    const tableBody = document.getElementById('borrowingTableBody');
+    tableBody.innerHTML = '';
+    
+    filteredBorrowings.forEach(borrowing => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+            <td>${borrowing.bookTitle}</td>
+            <td>${borrowing.borrower}</td>
+            <td>${borrowing.borrowDate}</td>
+            <td>${borrowing.dueDate || '-'}</td>
+            <td>${borrowing.returnDate || '-'}</td>
+            <td><span class="badge ${getBorrowingStatusBadgeClass(borrowing.status)}">${borrowing.status}</span></td>
+            <td>
+                <button class="btn-icon" onclick="editBorrowing(${borrowing.id})"><i class="fas fa-edit"></i></button>
+                <button class="btn-icon" onclick="confirmDeleteBorrowing(${borrowing.id})"><i class="fas fa-trash"></i></button>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+}
+
+// Filter borrowings by status
+function filterByStatus() {
+    const status = document.getElementById('statusFilter').value;
+    
+    if (status === 'all') {
+        renderBorrowings();
+        return;
+    }
+    
+    const filteredBorrowings = currentBorrowings.filter(borrowing => 
+        borrowing.status === status
+    );
+    
+    const tableBody = document.getElementById('borrowingTableBody');
+    tableBody.innerHTML = '';
+    
+    filteredBorrowings.forEach(borrowing => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+            <td>${borrowing.bookTitle}</td>
+            <td>${borrowing.borrower}</td>
+            <td>${borrowing.borrowDate}</td>
+            <td>${borrowing.dueDate || '-'}</td>
+            <td>${borrowing.returnDate || '-'}</td>
+            <td><span class="badge ${getBorrowingStatusBadgeClass(borrowing.status)}">${borrowing.status}</span></td>
+            <td>
+                <button class="btn-icon" onclick="editBorrowing(${borrowing.id})"><i class="fas fa-edit"></i></button>
+                <button class="btn-icon" onclick="confirmDeleteBorrowing(${borrowing.id})"><i class="fas fa-trash"></i></button>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+}
+
+// Borrowing pagination
+function nextBorrowingPage() {
+    const totalPages = Math.ceil(currentBorrowings.length / borrowingsPerPage);
+    if (currentBorrowingPage < totalPages) {
+        currentBorrowingPage++;
+        renderBorrowings();
+    }
+}
+
+function prevBorrowingPage() {
+    if (currentBorrowingPage > 1) {
+        currentBorrowingPage--;
+        renderBorrowings();
+    }
+}
+
+// Edit borrowing
+function editBorrowing(borrowingId) {
+    const borrowing = currentBorrowings.find(b => b.id === borrowingId);
+    if (!borrowing) return;
+    
+    document.getElementById('borrowingId').value = borrowing.id;
+    document.getElementById('borrowingStatus').value = borrowing.status;
+    document.getElementById('dueDate').value = borrowing.dueDate || '';
+    document.getElementById('returnDate').value = borrowing.returnDate || '';
+    
+    document.getElementById('borrowingModal').style.display = 'block';
+}
+
+// Handle borrowing form submission
+document.getElementById('updateBorrowingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const borrowingId = parseInt(document.getElementById('borrowingId').value);
+    const updatedBorrowing = {
+        status: document.getElementById('borrowingStatus').value,
+        dueDate: document.getElementById('dueDate').value,
+        returnDate: document.getElementById('returnDate').value
+    };
+    
+    // In a real application, you would send this to your backend API
+    // fetch(`/api/borrowings/${borrowingId}`, {
+    //     method: 'PUT',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify(updatedBorrowing)
+    // })
+    
+    // For demo purposes, update locally
+    const index = currentBorrowings.findIndex(b => b.id === borrowingId);
+    if (index !== -1) {
+        currentBorrowings[index] = { ...currentBorrowings[index], ...updatedBorrowing };
+        renderBorrowings();
+        closeModal('borrowingModal');
+        
+        Swal.fire({
+            title: 'Success!',
+            text: 'Borrowing record has been updated.',
+            icon: 'success',
+            confirmButtonColor: '#036d2b'
+        });
+    }
+});
+
+// Delete borrowing
+function confirmDeleteBorrowing(borrowingId) {
+    Swal.fire({
+        title: 'Delete Borrowing Record',
+        text: 'Are you sure you want to delete this borrowing record? This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        dangerMode: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // In a real application, you would send a DELETE request to your API
+            // fetch(`/api/borrowings/${borrowingId}`, { method: 'DELETE' })
+            
+            // For demo purposes, delete locally
+            currentBorrowings = currentBorrowings.filter(borrowing => borrowing.id !== borrowingId);
+            renderBorrowings();
+            
+            Swal.fire({
+                title: 'Deleted!',
+                text: 'The borrowing record has been deleted.',
+                icon: 'success',
+                confirmButtonColor: '#036d2b'
+            });
+        }
+    });
+}
+
 // Navigation and Content Panel
 const navLinks = document.querySelectorAll(".nav-list a");
 const panelContent = document.getElementById("panelContent");
@@ -1149,7 +1434,47 @@ const contentTemplates = {
                 <h2><span class="section-indicator">Borrowing</span> Management</h2>
                 <div class="section-divider"></div>
             </div>
-            <p>Manage book loans and returns here.</p>
+            
+            <div class="action-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchBorrowings" placeholder="Search borrowings..." onkeyup="searchBorrowings()">
+                </div>
+                <div class="filter-options">
+                    <select id="statusFilter" onchange="filterByStatus()">
+                        <option value="all">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Returned">Returned</option>
+                        <option value="Overdue">Overdue</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Borrower</th>
+                            <th>Borrow Date</th>
+                            <th>Due Date</th>
+                            <th>Return Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="borrowingTableBody">
+                        <!-- Borrowings will be loaded here from database -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="pagination">
+                <button class="btn-pagination" onclick="prevBorrowingPage()"><i class="fas fa-chevron-left"></i></button>
+                <span id="currentBorrowingPage">1</span>
+                <button class="btn-pagination" onclick="nextBorrowingPage()"><i class="fas fa-chevron-right"></i></button>
+            </div>
         </div>
     `,
     'settings': `
@@ -1193,6 +1518,8 @@ function showContent(sectionId) {
             // Initialize specific section content
             if (sectionId === 'inventory') {
                 loadBooks();
+            } else if (sectionId === 'borrowing') {
+                loadBorrowings();
             }
         }, 300);
     }, 500);
