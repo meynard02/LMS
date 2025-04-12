@@ -147,12 +147,13 @@
     </div>
 
     <!-- Inventory Management Modal -->
-    <div id="inventoryModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('inventoryModal')">&times;</span>
-            <h2>Edit Book Information</h2>
-            <form id="editBookForm">
-                <input type="hidden" id="editBookId">
+<div id="inventoryModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('inventoryModal')">&times;</span>
+        <h2 id="inventoryModalTitle">Add New Book</h2>
+        <form id="editBookForm" enctype="multipart/form-data">
+            <input type="hidden" id="editBookId">
+            <div class="modal-scroll-container">
                 <div class="form-group">
                     <label for="editAccessionNo">Accession No.</label>
                     <input type="text" id="editAccessionNo" class="form-control" required>
@@ -166,6 +167,20 @@
                     <input type="text" id="editAuthor" class="form-control" required>
                 </div>
                 <div class="form-group">
+                    <label for="editCategory">Category</label>
+                    <input type="text" id="editCategory" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="editDescription">Book Description</label>
+                    <textarea id="editDescription" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editPhoto">Book Photo</label>
+                    <input type="file" id="editPhoto" class="form-control" accept="image/*">
+                    <small class="text-muted">Upload a cover image for the book</small>
+                    <div id="photoPreview" style="margin-top: 10px;"></div>
+                </div>
+                <div class="form-group">
                     <label for="editAvailability">Availability</label>
                     <select id="editAvailability" class="form-control" required>
                         <option value="Available">Available</option>
@@ -174,14 +189,14 @@
                         <option value="Lost">Lost</option>
                     </select>
                 </div>
-                <div class="modal-buttons">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('inventoryModal')">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </div>
-            </form>
-        </div>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('inventoryModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
     </div>
-
+</div>
     <!-- Borrowing Management Modal -->
     <div id="borrowingModal" class="modal">
         <div class="modal-content">
