@@ -57,8 +57,32 @@ function showPanel(panelName) {
         activeTab.classList.add('active');
     }
     
-    // Update pending borrows display if on that panel
-    if (panelName === 'borrows') {
+    // If showing profile panel, default to personal info section
+    if (panelName === 'profile') {
+        showProfileSection('personal-info');
+    }
+}
+
+// Profile section switching functionality
+function showProfileSection(sectionId) {
+    // Hide all profile sections
+    document.querySelectorAll('.profile-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Deactivate all tabs
+    document.querySelectorAll('.profile-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Show the selected section
+    document.getElementById(`${sectionId}-section`).classList.add('active');
+    
+    // Activate the clicked tab
+    event.currentTarget.classList.add('active');
+    
+    // If showing borrows, update the display
+    if (sectionId === 'my-borrows') {
         updatePendingBorrowsDisplay();
     }
 }
@@ -336,7 +360,7 @@ function setupBookBorrowing() {
         showToast(`Borrow request for "${book.title}" submitted!`, 'success');
         
         // Update pending borrows display if on that panel
-        if (document.getElementById('borrows-panel').classList.contains('active')) {
+        if (document.getElementById('my-borrows-section').classList.contains('active')) {
             updatePendingBorrowsDisplay();
         }
     }
@@ -412,12 +436,18 @@ function setupBookBorrowing() {
     
     // Function to update borrows badge count
     function updateBorrowsBadge() {
-        const badge = document.getElementById('borrows-badge');
+        const navBadge = document.getElementById('borrows-badge');
+        const profileBadge = document.getElementById('profile-borrows-badge');
+        const pendingBorrows = JSON.parse(localStorage.getItem('pendingBorrows')) || [];
+        
         if (pendingBorrows.length > 0) {
-            badge.textContent = pendingBorrows.length;
-            badge.classList.remove('hidden');
+            navBadge.textContent = pendingBorrows.length;
+            profileBadge.textContent = pendingBorrows.length;
+            navBadge.classList.remove('hidden');
+            profileBadge.classList.remove('hidden');
         } else {
-            badge.classList.add('hidden');
+            navBadge.classList.add('hidden');
+            profileBadge.classList.add('hidden');
         }
     }
     
@@ -739,7 +769,107 @@ initializeBookData.detailedBookData = {
             language: "English",
             isbn: "978-0123456789"
         },
-        // ... other books ...
+        { 
+            title: "Biology Today", 
+            author: "Charles Darwin", 
+            cover: "biology.jpg",
+            genre: "Science, Biology",
+            description: "Explore the fascinating world of living organisms.",
+            year: "2020",
+            pages: "380",
+            language: "English",
+            isbn: "978-0987654321"
+        }
     ],
-    // ... other categories ...
+    filipino: [
+        { 
+            title: "Noli Me Tangere", 
+            author: "José Rizal", 
+            cover: "noli.jpg",
+            genre: "Literature, Historical",
+            description: "A novel exposing the abuses of the Spanish colonial government.",
+            year: "1887",
+            pages: "480",
+            language: "Filipino",
+            isbn: "978-1234567890"
+        }
+    ],
+    pe: [
+        { 
+            title: "Sports Science", 
+            author: "John Doe", 
+            cover: "sports.jpg",
+            genre: "Physical Education",
+            description: "Understanding scientific principles behind athletic performance.",
+            year: "2020",
+            pages: "280",
+            language: "English",
+            isbn: "978-4567890123"
+        }
+    ],
+    music: [
+        { 
+            title: "Music Theory", 
+            author: "Beethoven", 
+            cover: "music-theory.jpg",
+            genre: "Music, Education",
+            description: "Fundamental concepts of music theory.",
+            year: "2018",
+            pages: "240",
+            language: "English",
+            isbn: "978-6789012345"
+        }
+    ],
+    english: [
+        { 
+            title: "Shakespeare's Works", 
+            author: "William Shakespeare", 
+            cover: "shakespeare.jpg",
+            genre: "Literature, Drama",
+            description: "Complete collection of plays and sonnets.",
+            year: "2020",
+            pages: "1200",
+            language: "English",
+            isbn: "978-8901234567"
+        }
+    ],
+    ap: [
+        { 
+            title: "World History", 
+            author: "Howard Zinn", 
+            cover: "history.jpg",
+            genre: "History, Education",
+            description: "A people's history of the world.",
+            year: "2015",
+            pages: "720",
+            language: "English",
+            isbn: "978-0123456789"
+        }
+    ],
+    fiction: [
+        { 
+            title: "Harry Potter", 
+            author: "J.K. Rowling", 
+            cover: "harry-potter.jpg",
+            genre: "Fiction, Fantasy",
+            description: "The story of a young wizard's adventures.",
+            year: "1997",
+            pages: "320",
+            language: "English",
+            isbn: "978-2345678901"
+        }
+    ],
+    more: [
+        { 
+            title: "More Books Coming Soon", 
+            author: "", 
+            cover: "",
+            genre: "Various",
+            description: "Check back soon for more options!",
+            year: "",
+            pages: "",
+            language: "",
+            isbn: ""
+        }
+    ]
 };
