@@ -795,4 +795,131 @@ body {
     font-size: 16px;
 }
 
+/* Form styles */
+.form-group {
+    margin-bottom: 15px;
+}
 
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: var(--dark-gray);
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--medium-gray);
+    border-radius: 5px;
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(3, 109, 44, 0.2);
+}
+
+textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.text-muted {
+    color: #6c757d;
+    font-size: 12px;
+}
+
+/* Photo preview */
+#photoPreview img {
+    border-radius: 5px;
+    border: 1px solid var(--medium-gray);
+    padding: 3px;
+}
+
+/* Badge styles */
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-available {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.badge-checkedout {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.badge-onhold {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.badge-lost {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Modal scroll container styles */
+.modal-content {
+    max-height: 90vh; /* Limit modal height */
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-scroll-container {
+    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 60vh; /* Adjust based on your needs */
+    padding-right: 10px; /* Prevent content from hiding behind scrollbar */
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--medium-gray);
+    border-top: 1px solid var(--medium-gray);
+}
+
+/* Custom scrollbar styling */
+.modal-scroll-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-scroll-container::-webkit-scrollbar-track {
+    background: var(--light-gray);
+    border-radius: 4px;
+}
+
+.modal-scroll-container::-webkit-scrollbar-thumb {
+    background: var(--primary-light);
+    border-radius: 4px;
+}
+
+.modal-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+/* Make sure buttons stay fixed at bottom */
+.modal-buttons {
+    margin-top: auto;
+    padding-top: 15px;
+}
+/* Modal adjustments */
+.modal {
+    overflow: hidden; /* Prevent double scrollbars */
+}
+
+.modal-content {
+    max-width: 600px; /* Or your preferred width */
+    width: 90%;
+    margin: 5% auto;
+    padding: 20px;
+}
+
+/* Form group spacing */
+.form-group {
+    margin-bottom: 15px;
+}
