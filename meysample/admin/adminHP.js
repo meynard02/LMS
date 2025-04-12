@@ -824,34 +824,41 @@ function showUserManagement(userType) {
 
 // Inventory Management Functions
 let currentBooks = [];
-let currentSortField = 'accessionNo';
+let currentSortField = 'AccessionNo';
 let currentSortOrder = 'asc';
 let currentPage = 1;
 const booksPerPage = 10;
 
 // Load books from database
+// Load books from database
+// Load books from database
 async function loadBooks() {
     try {
-        // In a real application, you would fetch from your backend API
-        // const response = await fetch('/api/books');
-        // currentBooks = await response.json();
+        showLoading(true);
+        const response = await fetch('fetch_books.php');
         
-        // Mock data for demonstration
-        currentBooks = [
-            { id: 1, accessionNo: 'LIB-2023-001', title: 'Introduction to Computer Science', author: 'John Doe', availability: 'Available' },
-            { id: 2, accessionNo: 'LIB-2023-002', title: 'Advanced JavaScript', author: 'Jane Smith', availability: 'Checked Out' },
-            { id: 3, accessionNo: 'LIB-2023-003', title: 'Database Systems', author: 'Michael Johnson', availability: 'Available' },
-            { id: 4, accessionNo: 'LIB-2023-004', title: 'Web Development', author: 'Sarah Williams', availability: 'On Hold' },
-            { id: 5, accessionNo: 'LIB-2023-005', title: 'Data Structures', author: 'David Brown', availability: 'Available' },
-            { id: 6, accessionNo: 'LIB-2023-006', title: 'Algorithms', author: 'Robert Taylor', availability: 'Lost' },
-            { id: 7, accessionNo: 'LIB-2023-007', title: 'Machine Learning', author: 'Emily Davis', availability: 'Available' },
-            { id: 8, accessionNo: 'LIB-2023-008', title: 'Artificial Intelligence', author: 'James Wilson', availability: 'Checked Out' },
-            { id: 9, accessionNo: 'LIB-2023-009', title: 'Computer Networks', author: 'Patricia Moore', availability: 'Available' },
-            { id: 10, accessionNo: 'LIB-2023-010', title: 'Operating Systems', author: 'Richard Anderson', availability: 'Available' },
-            { id: 11, accessionNo: 'LIB-2023-011', title: 'Software Engineering', author: 'Jennifer Thomas', availability: 'On Hold' },
-            { id: 12, accessionNo: 'LIB-2023-012', title: 'Computer Architecture', author: 'Charles Jackson', availability: 'Available' }
-        ];
+        // First check if response is OK
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         
+        // Then check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error("Response is not JSON");
+        }
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.error || 'Failed to load books from server');
+        }
+        
+        if (!Array.isArray(data.data)) {
+            throw new Error('Invalid data format received from server');
+        }
+        
+        currentBooks = data.data;
         renderBooks();
     } catch (error) {
         console.error('Error loading books:', error);
@@ -861,12 +868,120 @@ async function loadBooks() {
             icon: 'error',
             confirmButtonColor: '#036d2b'
         });
+    } finally {
+        showLoading(false);
     }
 }
 
-// Render books to the table
+// Save book (add or update)
+async function saveBook(formData) {
+    try {
+        showLoading(true);
+        const response = await fetch('book_operation.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.error || 'Operation failed');
+        }
+        
+        await loadBooks(); // Refresh the book list
+        showSuccess('Book saved successfully');
+        return data;
+    } catch (error) {
+        console.error('Error saving book:', error);
+        showError('Failed to save book', error.message);
+        throw error;
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Delete book
+async function deleteBook(accessionNo) {
+    try {
+        showLoading(true);
+        const formData = new FormData();
+        formData.append('action', 'delete');
+        formData.append('accessionNo', accessionNo);
+        
+        const response = await fetch('book_operation.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.error || 'Delete failed');
+        }
+        
+        await loadBooks(); // Refresh the book list
+        showSuccess('Book deleted successfully');
+        return data;
+    } catch (error) {
+        console.error('Error deleting book:', error);
+        showError('Failed to delete book', error.message);
+        throw error;
+    } finally {
+        showLoading(false);
+    }
+}
+
+function showLoading(show) {
+    const loader = document.getElementById('loadingOverlay');
+    if (loader) {
+        loader.style.display = show ? 'flex' : 'none';
+    }
+}
+
+function showError(message) {
+    Swal.fire({
+        title: 'Error!',
+        text: message,
+        icon: 'error',
+        confirmButtonColor: '#036d2b'
+    });
+}
+
+function showSuccess(message) {
+    Swal.fire({
+        title: 'Success!',
+        text: message,
+        icon: 'success',
+        confirmButtonColor: '#036d2b'
+    });
+}
+
+function showError(title, message) {
+    Swal.fire({
+        title: title || 'Error!',
+        text: message || 'An unexpected error occurred',
+        icon: 'error',
+        confirmButtonColor: '#036d2b'
+    });
+}
+
+
+// Render books to the table (without Category and Description)
 function renderBooks() {
     const tableBody = document.getElementById('inventoryTableBody');
+    if (!tableBody) {
+        console.error('Inventory table body not found');
+        return;
+    }
+    
     tableBody.innerHTML = '';
     
     // Sort books
@@ -885,20 +1000,23 @@ function renderBooks() {
     const paginatedBooks = sortedBooks.slice(startIndex, startIndex + booksPerPage);
     
     // Update current page display
-    document.getElementById('currentPage').textContent = currentPage;
+    const currentPageElement = document.getElementById('currentPage');
+    if (currentPageElement) {
+        currentPageElement.textContent = currentPage;
+    }
     
     // Populate table
     paginatedBooks.forEach(book => {
         const row = document.createElement('tr');
         
         row.innerHTML = `
-            <td>${book.accessionNo}</td>
-            <td>${book.title}</td>
-            <td>${book.author}</td>
-            <td><span class="badge ${getAvailabilityBadgeClass(book.availability)}">${book.availability}</span></td>
+            <td>${book.AccessionNo}</td>
+            <td>${book.Title}</td>
+            <td>${book.Author}</td>
+            <td><span class="badge ${getAvailabilityBadgeClass(book.Availability)}">${book.Availability}</span></td>
             <td>
-                <button class="btn-icon" onclick="editBook(${book.id})"><i class="fas fa-edit"></i></button>
-                <button class="btn-icon" onclick="confirmDeleteBook(${book.id})"><i class="fas fa-trash"></i></button>
+                <button class="btn-icon" onclick="editBook(${book.AccessionNo})"><i class="fas fa-edit"></i></button>
+                <button class="btn-icon" onclick="confirmDeleteBook(${book.AccessionNo})"><i class="fas fa-trash"></i></button>
             </td>
         `;
         
@@ -930,7 +1048,7 @@ function sortBooks(field, order) {
     event.currentTarget.classList.add('active');
 }
 
-// Search books
+// Search books (only searches visible columns)
 function searchBooks() {
     const searchTerm = document.getElementById('searchBooks').value.toLowerCase();
     
@@ -940,10 +1058,10 @@ function searchBooks() {
     }
     
     const filteredBooks = currentBooks.filter(book => 
-        book.accessionNo.toLowerCase().includes(searchTerm) ||
-        book.title.toLowerCase().includes(searchTerm) ||
-        book.author.toLowerCase().includes(searchTerm) ||
-        book.availability.toLowerCase().includes(searchTerm)
+        book.AccessionNo.toLowerCase().includes(searchTerm) ||
+        book.Title.toLowerCase().includes(searchTerm) ||
+        book.Author.toLowerCase().includes(searchTerm) ||
+        book.Availability.toLowerCase().includes(searchTerm)
     );
     
     const tableBody = document.getElementById('inventoryTableBody');
@@ -953,10 +1071,10 @@ function searchBooks() {
         const row = document.createElement('tr');
         
         row.innerHTML = `
-            <td>${book.accessionNo}</td>
-            <td>${book.title}</td>
-            <td>${book.author}</td>
-            <td><span class="badge ${getAvailabilityBadgeClass(book.availability)}">${book.availability}</span></td>
+            <td>${book.AccessionNo}</td>
+            <td>${book.Title}</td>
+            <td>${book.Author}</td>
+            <td><span class="badge ${getAvailabilityBadgeClass(book.Availability)}">${book.Availability}</span></td>
             <td>
                 <button class="btn-icon" onclick="editBook(${book.id})"><i class="fas fa-edit"></i></button>
                 <button class="btn-icon" onclick="confirmDeleteBook(${book.id})"><i class="fas fa-trash"></i></button>
@@ -984,43 +1102,67 @@ function prevPage() {
 }
 
 // Edit book
-function editBook(bookId) {
-    const book = currentBooks.find(b => b.id === bookId);
-    if (!book) return;
+function editBook(accessionNo) {
+    const book = currentBooks.find(b => b.AccessionNo == accessionNo);
+    if (!book) {
+        console.error('Book not found with AccessionNo:', accessionNo);
+        return;
+    }
     
-    document.getElementById('editBookId').value = book.id;
-    document.getElementById('editAccessionNo').value = book.accessionNo;
-    document.getElementById('editTitle').value = book.title;
-    document.getElementById('editAuthor').value = book.author;
-    document.getElementById('editAvailability').value = book.availability;
+    document.getElementById('editBookId').value = book.AccessionNo;
+    document.getElementById('editAccessionNo').value = book.AccessionNo;
+    document.getElementById('editTitle').value = book.Title;
+    document.getElementById('editAuthor').value = book.Author;
+    document.getElementById('editCategory').value = book.Category || '';
+    document.getElementById('editDescription').value = book.Description || '';
+    document.getElementById('editAvailability').value = book.Availability || 'Available';
     
+    // Show photo preview if exists
+    const photoPreview = document.getElementById('photoPreview');
+    if (book.Photo) {
+        photoPreview.innerHTML = `<img src="../uploads/${book.Photo}" style="max-width: 100px; max-height: 100px;">`;
+    } else {
+        photoPreview.innerHTML = '';
+    }
+    
+    document.getElementById('inventoryModalTitle').textContent = 'Edit Book Information';
     document.getElementById('inventoryModal').style.display = 'block';
 }
-
 // Handle form submission
-document.getElementById('editBookForm').addEventListener('submit', function(e) {
+document.getElementById('editBookForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    const bookId = parseInt(document.getElementById('editBookId').value);
-    const updatedBook = {
-        accessionNo: document.getElementById('editAccessionNo').value,
-        title: document.getElementById('editTitle').value,
-        author: document.getElementById('editAuthor').value,
-        availability: document.getElementById('editAvailability').value
-    };
+    const bookId = document.getElementById('editBookId').value;
+    const formData = new FormData();
     
-    // In a real application, you would send this to your backend API
-    // fetch(`/api/books/${bookId}`, {
-    //     method: 'PUT',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(updatedBook)
-    // })
+    formData.append('id', bookId);
+    formData.append('accessionNo', document.getElementById('editAccessionNo').value);
+    formData.append('title', document.getElementById('editTitle').value);
+    formData.append('author', document.getElementById('editAuthor').value);
+    formData.append('category', document.getElementById('editCategory').value);
+    formData.append('description', document.getElementById('editDescription').value);
+    formData.append('availability', document.getElementById('editAvailability').value);
     
-    // For demo purposes, update locally
-    const index = currentBooks.findIndex(b => b.id === bookId);
-    if (index !== -1) {
-        currentBooks[index] = { ...currentBooks[index], ...updatedBook };
-        renderBooks();
+    const photoInput = document.getElementById('editPhoto');
+    if (photoInput.files[0]) {
+        formData.append('photo', photoInput.files[0]);
+    }
+    
+    try {
+        const response = await fetch('book_operations.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (!result.success) {
+            throw new Error(result.error || 'Failed to update book');
+        }
+        
+        // Reload books
+        await loadBooks();
+        
         closeModal('inventoryModal');
         
         Swal.fire({
@@ -1029,14 +1171,22 @@ document.getElementById('editBookForm').addEventListener('submit', function(e) {
             icon: 'success',
             confirmButtonColor: '#036d2b'
         });
+    } catch (error) {
+        console.error('Error updating book:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: error.message || 'Failed to update book.',
+            icon: 'error',
+            confirmButtonColor: '#036d2b'
+        });
     }
 });
 
 // Delete book
-function confirmDeleteBook(bookId) {
+function confirmDeleteBook(accessionNo) {
     Swal.fire({
         title: 'Delete Book',
-        text: 'Are you sure you want to delete this book? This action cannot be undone.',
+        text: `Are you sure you want to delete book with Accession No. ${accessionNo}? This action cannot be undone.`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
@@ -1044,21 +1194,45 @@ function confirmDeleteBook(bookId) {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
         dangerMode: true
-    }).then((result) => {
+    }).then(async (result) => {
         if (result.isConfirmed) {
-            // In a real application, you would send a DELETE request to your API
-            // fetch(`/api/books/${bookId}`, { method: 'DELETE' })
-            
-            // For demo purposes, delete locally
-            currentBooks = currentBooks.filter(book => book.id !== bookId);
-            renderBooks();
-            
-            Swal.fire({
-                title: 'Deleted!',
-                text: 'The book has been deleted.',
-                icon: 'success',
-                confirmButtonColor: '#036d2b'
-            });
+            try {
+                const response = await fetch('book_operations.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'delete',
+                        accessionNo: accessionNo
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.error || 'Delete failed');
+                }
+                
+                // Remove from local array and re-render
+                currentBooks = currentBooks.filter(book => book.AccessionNo != accessionNo);
+                renderBooks();
+                
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: 'The book has been deleted.',
+                    icon: 'success',
+                    confirmButtonColor: '#036d2b'
+                });
+            } catch (error) {
+                console.error('Error deleting book:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: error.message || 'Failed to delete book.',
+                    icon: 'error',
+                    confirmButtonColor: '#036d2b'
+                });
+            }
         }
     });
 }
@@ -1068,12 +1242,26 @@ function showAddBookModal() {
     // Reset form
     document.getElementById('editBookForm').reset();
     document.getElementById('editBookId').value = '';
+    document.getElementById('photoPreview').innerHTML = '';
     
     // Change modal title
-    document.querySelector('#inventoryModal h2').textContent = 'Add New Book';
+    document.getElementById('inventoryModalTitle').textContent = 'Add New Book';
     
     document.getElementById('inventoryModal').style.display = 'block';
 }
+
+// Add photo preview functionality
+document.getElementById('editPhoto').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            document.getElementById('photoPreview').innerHTML = 
+                `<img src="${event.target.result}" style="max-width: 100px; max-height: 100px;">`;
+        };
+        reader.readAsDataURL(file);
+    }
+});
 
 // Borrowing Management Functions
 let currentBorrowings = [];
@@ -1375,59 +1563,56 @@ const contentTemplates = {
             <p>Welcome to the library management system dashboard.</p>
         </div>
     `,
-    'inventory': `
-        <div class="content-section">
-            <div class="section-header">
-                <h2><span class="section-indicator">Inventory</span> Management</h2>
-                <div class="section-divider"></div>
-            </div>
-            
-            <div class="action-bar">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchBooks" placeholder="Search books..." onkeyup="searchBooks()">
-                </div>
-                <button class="btn btn-primary" onclick="showAddBookModal()">
-                    <i class="fas fa-plus"></i> Add New Book
-                </button>
-            </div>
-            
-            <div class="sort-options">
-                <button class="sort-btn" onclick="sortBooks('accessionNo', 'asc')">
-                    <i class="fas fa-sort-amount-up"></i> Accession No.
-                </button>
-                <button class="sort-btn" onclick="sortBooks('title', 'asc')">
-                    <i class="fas fa-sort-alpha-down"></i> Title
-                </button>
-                <button class="sort-btn" onclick="sortBooks('author', 'asc')">
-                    <i class="fas fa-sort-alpha-down"></i> Author
-                </button>
-            </div>
-            
-            <div class="table-responsive">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Accession No.</th>
-                            <th>Book Title</th>
-                            <th>Author</th>
-                            <th>Availability</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="inventoryTableBody">
-                        <!-- Books will be loaded here from database -->
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="pagination">
-                <button class="btn-pagination" onclick="prevPage()"><i class="fas fa-chevron-left"></i></button>
-                <span id="currentPage">1</span>
-                <button class="btn-pagination" onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
-            </div>
+'inventory': `
+<div class="content-section">
+    <div class="section-header">
+        <h2><span class="section-indicator">Inventory</span> Management</h2>
+        <div class="section-divider"></div>
+    </div>
+    
+    <div class="action-bar">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchBooks" placeholder="Search books..." 
+                   onkeyup="searchBooks()">
         </div>
-    `,
+        <button class="btn btn-primary" onclick="showAddBookModal()">
+            <i class="fas fa-plus"></i> Add New Book
+        </button>
+    </div>
+    
+    <div id="loadingOverlay" style="display: none;">
+        <i class="fas fa-spinner fa-spin"></i> Loading books...
+    </div>
+    
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Accession No.</th>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                    <th>Availability</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="inventoryTableBody">
+                <!-- Books will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="pagination">
+        <button class="btn-pagination" onclick="prevPage()">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <span id="currentPage">1</span>
+        <button class="btn-pagination" onclick="nextPage()">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+</div>
+`,
     'borrowing': `
         <div class="content-section">
             <div class="section-header">
@@ -1490,10 +1675,12 @@ const contentTemplates = {
 
 function showContent(sectionId) {
     // Update navigation active state
+    const navLinks = document.querySelectorAll(".nav-list a");
     navLinks.forEach(nav => nav.classList.remove("active"));
     event.currentTarget.classList.add("active");
     
     // Show loading state
+    const panelContent = document.getElementById("panelContent");
     panelContent.innerHTML = `
         <div class="loading-state">
             <i class="fas fa-spinner fa-spin"></i>
