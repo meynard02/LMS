@@ -28,16 +28,12 @@
                 <a href="#" onclick="showPanel('profile')">
                     <i class="fas fa-user"></i>
                     <span class="nav-text">Profile</span>
+                    <span class="borrows-badge hidden" id="borrows-badge">0</span>
                 </a>
                 <a href="#" onclick="showPanel('notification')" class="notification-link">
                     <i class="fas fa-bell"></i>
                     <span class="nav-text">Notifications</span>
                     <span class="notification-badge">3</span>
-                </a>
-                <a href="#" onclick="showPanel('borrows')">
-                    <i class="fas fa-clock"></i>
-                    <span class="nav-text">My Borrows</span>
-                    <span class="borrows-badge hidden" id="borrows-badge">0</span>
                 </a>
                 <a href="#" onclick="return confirmLogout()">
                     <i class="fas fa-sign-out-alt"></i>
@@ -99,39 +95,66 @@
             
             <div id="profile-panel" class="content-panel">
                 <div class="panel-content">
-                    <div class="content-section">
-                        <div class="section-header">
-                            <h2><i class="fas fa-user section-icon"></i> <span class="section-indicator">Profile Information</span></h2>
-                            <button class="edit-profile-btn" id="edit-profile-btn">
-                                <i class="fas fa-edit"></i> Edit Profile
-                            </button>
-                            <div class="section-divider"></div>
+                    <div class="profile-tabs">
+                        <button class="profile-tab active" onclick="showProfileSection('personal-info')">
+                            <i class="fas fa-user-circle"></i> Personal Information
+                        </button>
+                        <button class="profile-tab" onclick="showProfileSection('my-borrows')">
+                            <i class="fas fa-clock"></i> My Borrows
+                            <span class="borrows-badge hidden" id="profile-borrows-badge">0</span>
+                        </button>
+                    </div>
+                    
+                    <div id="personal-info-section" class="profile-section active">
+                        <div class="content-section">
+                            <div class="section-header">
+                                <h2><i class="fas fa-user section-icon"></i> <span class="section-indicator">Profile Information</span></h2>
+                                <button class="edit-profile-btn" id="edit-profile-btn">
+                                    <i class="fas fa-edit"></i> Edit Profile
+                                </button>
+                                <div class="section-divider"></div>
+                            </div>
+                            
+                            <div class="profile-info-container">
+                                <div class="profile-info-row">
+                                    <span class="profile-info-label"><i class="fas fa-envelope"></i> Email</span>
+                                    <span class="profile-info-value" id="profile-email">xxxxxxx@spist.edu.ph</span>
+                                </div>
+                                
+                                <div class="profile-info-row">
+                                    <span class="profile-info-label"><i class="fas fa-signature"></i> First Name</span>
+                                    <span class="profile-info-value" id="profile-firstname">Juan</span>
+                                </div>
+                                
+                                <div class="profile-info-row">
+                                    <span class="profile-info-label"><i class="fas fa-signature"></i> Last Name</span>
+                                    <span class="profile-info-value" id="profile-lastname">Dela Cruz</span>
+                                </div>
+                                
+                                <div class="profile-info-row">
+                                    <span class="profile-info-label"><i class="fas fa-lock"></i> Password</span>
+                                    <span class="profile-info-value">
+                                        **********
+                                        <button class="change-password-btn" id="change-password-btn">
+                                            <i class="fas fa-key"></i> Change Password
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="profile-info-container">
-                            <div class="profile-info-row">
-                                <span class="profile-info-label"><i class="fas fa-envelope"></i> Email</span>
-                                <span class="profile-info-value" id="profile-email">xxxxxxx@spist.edu.ph</span>
+                    </div>
+                    
+                    <div id="my-borrows-section" class="profile-section">
+                        <div class="content-section">
+                            <div class="section-header">
+                                <h2><i class="fas fa-clock section-icon"></i> <span class="section-indicator">My Borrows</span></h2>
+                                <div class="section-divider"></div>
                             </div>
-                            
-                            <div class="profile-info-row">
-                                <span class="profile-info-label"><i class="fas fa-signature"></i> First Name</span>
-                                <span class="profile-info-value" id="profile-firstname">Juan</span>
-                            </div>
-                            
-                            <div class="profile-info-row">
-                                <span class="profile-info-label"><i class="fas fa-signature"></i> Last Name</span>
-                                <span class="profile-info-value" id="profile-lastname">Dela Cruz</span>
-                            </div>
-                            
-                            <div class="profile-info-row">
-                                <span class="profile-info-label"><i class="fas fa-lock"></i> Password</span>
-                                <span class="profile-info-value">
-                                    **********
-                                    <button class="change-password-btn" id="change-password-btn">
-                                        <i class="fas fa-key"></i> Change Password
-                                    </button>
-                                </span>
+                            <div class="borrows-container" id="pending-borrows">
+                                <div class="no-borrows" id="no-borrows-message">
+                                    <i class="fas fa-book-open"></i>
+                                    <p>You have no pending book borrows</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -187,24 +210,6 @@
                         </div>
                         <div class="book-grid" id="bookGrid">
                             <!-- Books will be inserted here by JavaScript -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="borrows-panel" class="content-panel">
-                <div class="panel-content">
-                    <div class="content-section">
-                        <div class="section-header">
-                            <h2><i class="fas fa-clock section-icon"></i> <span class="section-indicator">My Borrows</span></h2>
-                            <div class="section-divider"></div>
-                        </div>
-                        <div class="borrows-container" id="pending-borrows">
-                            <div class="no-borrows" id="no-borrows-message">
-                                <i class="fas fa-book-open"></i>
-                                <p>You have no pending book borrows</p>
-                            </div>
-                            <!-- Pending borrows will be inserted here by JavaScript -->
                         </div>
                     </div>
                 </div>
