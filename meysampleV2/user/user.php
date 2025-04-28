@@ -123,15 +123,14 @@ $lastname = $user['LastName'];
             </div>
             
             <div id="profile-panel" class="content-panel">
-                <div class="panel-content">
-                    <div class="profile-tabs">
-                        <button class="profile-tab active" onclick="showProfileSection('personal-info')">
-                            <i class="fas fa-user-circle"></i> Personal Information
-                        </button>
-                        <button class="profile-tab" onclick="showProfileSection('my-borrows')">
-                            <i class="fas fa-clock"></i> My Borrows
-                            <span class="borrows-badge hidden" id="profile-borrows-badge">0</span>
-                        </button>
+        <div class="panel-content">
+            <div class="profile-tabs">
+                <button class="profile-tab" onclick="showProfileSection('my-borrows')"><i class="fas fa-clock"></i> My Borrows <span class="borrows-badge hidden" id="profile-borrows-badge">0</span></button>
+                <button class="profile-tab" onclick="showProfileSection('books-in-my-bag')"><i class="fas fa-shopping-bag"></i> Books In My Bag</button>
+                <button class="profile-tab" onclick="showProfileSection('finished-reads')"><i class="fas fa-check-circle"></i> Finished Reads</button>
+                <button class="profile-tab active" onclick="showProfileSection('personal-info')"><i class="fas fa-user-circle"></i> Personal Information</button>
+            </div>
+                        
                     </div>
                     
                     <div id="personal-info-section" class="profile-section active">
@@ -187,9 +186,51 @@ $lastname = $user['LastName'];
                             </div>
                         </div>
                     </div>
+
+                    <!-- Finished Reads Section -->
+<div id="finished-reads-section" class="profile-section">
+                <div class="content-section">
+                    <h2><i class="fas fa-check-circle section-icon"></i> Finished Reads</h2>
+                    <div class="section-divider"></div>
+
+                    <!-- Filter Options -->
+                    <div class="filters">
+                        <select id="finishedFilter" onchange="filterFinishedReads()">
+                            <option value="all">All Time</option>
+                            <option value="week">Last Week</option>
+                            <option value="month">This Month</option>
+                            <option value="year">This Year</option>
+                            <option value="custom">Custom Date</option>
+                        </select>
+                        <input type="date" id="customDate" onchange="filterFinishedReads()" style="display:none;">
+                    </div>
+
+                    <!-- Sample Data Finished Reads -->
+                    <div id="finished-reads-list" class="borrows-container">
+                        <!-- JS will insert finished books -->
+                    </div>
                 </div>
             </div>
             
+<!-- Books in My Bag Section -->
+<div id="books-in-my-bag-section" class="profile-section">
+                <div class="content-section">
+                    <h2><i class="fas fa-shopping-bag section-icon"></i> Books In My Bag</h2>
+                    <div class="section-divider"></div>
+
+                    <div id="books-bag-list" class="borrows-container">
+                        <!-- JS will insert current books -->
+                    </div>
+                </div>
+            </div>
+                </div>
+            </div>
+
+
+
+        
+
+
             <div id="notification-panel" class="content-panel">
                 <div class="panel-content">
                     <div class="content-section">
