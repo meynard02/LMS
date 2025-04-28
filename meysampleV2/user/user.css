@@ -1124,4 +1124,42 @@ body {
 }
 
 
-/* Keep all your existing CSS below this point */
+/* Finished Reads and My Bag */
+.filters {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.filters select, .filters input[type="date"] {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.filters select:focus, .filters input[type="date"]:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+/* Overdue books warning */
+.borrow-date.overdue, .borrow-status.overdue {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.borrow-status.overdue i {
+    color: #e74c3c;
+}
+
+/* Visual Smoothness */
+.borrow-item {
+    transition: all 0.3s ease;
+}
+.borrow-item:hover {
+    background-color: #f1f8e9;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
