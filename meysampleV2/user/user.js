@@ -20,6 +20,9 @@ document.addEventListener("DOMContentLoaded", function() {
     // Setup book borrowing functionality
     setupBookBorrowing();
     
+    setupFinishedReads();
+    setupBooksInBag(); 
+    
     // Setup search functionality
     setupSearch();
 });
@@ -59,7 +62,7 @@ function showPanel(panelName) {
     
     // If showing profile panel, default to personal info section
     if (panelName === 'profile') {
-        showProfileSection('personal-info');
+        showProfileSection('my-borrows');
     }
 }
 
@@ -85,6 +88,75 @@ function showProfileSection(sectionId) {
     if (sectionId === 'my-borrows') {
         updatePendingBorrowsDisplay();
     }
+}
+
+function setupFinishedReads() {
+    const finishedReads = [
+        { title: "Harry Potter", author: "J.K. Rowling", borrowed: "2025-04-01", returnedOverdue: false, cover: "harry-potter.jpg" },
+        { title: "Physics Fundamentals", author: "Marie Curie", borrowed: "2025-03-15", returnedOverdue: true, cover: "physics.jpg" }
+    ];
+
+    const list = document.getElementById('finished-reads-list');
+    finishedReads.forEach(book => {
+        const item = document.createElement('div');
+        item.className = 'borrow-item';
+
+        item.innerHTML = `
+            <div class="borrow-cover" style="background-image:url('../books/${book.cover}')"></div>
+            <div class="borrow-info">
+                <div class="borrow-title">${book.title}</div>
+                <div class="borrow-author">${book.author}</div>
+                <div class="borrow-meta">
+                    <span class="borrow-date"><i class="fas fa-calendar-alt"></i> Borrowed: ${book.borrowed}</span>
+                    ${book.returnedOverdue ? `<span class="borrow-status overdue"><i class="fas fa-exclamation-triangle"></i> Returned Overdue</span>` : `<span class="borrow-status"><i class="fas fa-check-circle"></i> Returned On Time</span>`}
+                </div>
+            </div>
+        `;
+        list.appendChild(item);
+    });
+
+    // Filter Handler
+    window.filterFinishedReads = function() {
+        const filter = document.getElementById('finishedFilter').value;
+        const customDate = document.getElementById('customDate');
+        if (filter === 'custom') {
+            customDate.style.display = 'inline-block';
+        } else {
+            customDate.style.display = 'none';
+        }
+    }
+}
+
+// ========== Books In My Bag ==========
+function setupBooksInBag() {
+    const myBag = [
+        { title: "World History", author: "Howard Zinn", borrowed: "2025-04-20", due: "2025-05-04", overdue: false, cover: "history.jpg" },
+        { title: "Music Theory", author: "Beethoven", borrowed: "2025-04-05", due: "2025-04-20", overdue: true, cover: "music-theory.jpg" }
+    ];
+
+    const list = document.getElementById('books-bag-list');
+    myBag.forEach(book => {
+        const item = document.createElement('div');
+        item.className = 'borrow-item';
+        if (book.overdue) {
+            document.querySelector(`button[onclick*="books-in-my-bag"] .fa-shopping-bag`).style.color = '#e74c3c'; 
+        }
+
+        item.innerHTML = `
+            <div class="borrow-cover" style="background-image:url('../books/${book.cover}')"></div>
+            <div class="borrow-info">
+                <div class="borrow-title">${book.title}</div>
+                <div class="borrow-author">${book.author}</div>
+                <div class="borrow-meta">
+                    <span class="borrow-date"><i class="fas fa-calendar-alt"></i> Borrowed: ${book.borrowed}</span>
+                    <span class="borrow-date ${book.overdue ? 'overdue' : ''}">
+                        <i class="fas fa-calendar-check"></i> Due: ${book.due}
+                    </span>
+                </div>
+            </div>
+        `;
+        list.appendChild(item);
+    });
 }
 
 // Book data and functionality
