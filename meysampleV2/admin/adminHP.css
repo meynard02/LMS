@@ -939,3 +939,49 @@ textarea.form-control {
     outline: none;
     border-color: #036d2b;
 }
+
+.tab-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    background-color: var(--light-gray);
+    color: var(--primary-color);
+    border: 1px solid var(--medium-gray);
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.tab-btn:hover {
+    background-color: var(--primary-light);
+    color: white;
+}
+
+.tab-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.4s ease-in-out;
+    padding: 15px 5px;
+    border-top: 1px solid var(--medium-gray);
+}
+
+.tab-content h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.tab-content input,
+.tab-content select {
+    margin: 10px 0;
+}
