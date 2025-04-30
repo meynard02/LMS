@@ -223,6 +223,10 @@ body {
     padding: 20px;
 }
 
+.content-section-profile {
+    padding: 20px;
+}
+
 .section-header {
     margin-bottom: 30px;
     display: flex;
@@ -690,7 +694,9 @@ body {
         right: -5px;
     }
     
-    .content-container {
+    
+
+    .content-container-profile {
         margin-top: 20px;
         padding: 15px;
     }
