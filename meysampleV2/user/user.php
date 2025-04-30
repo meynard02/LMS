@@ -71,7 +71,7 @@ $lastname = $user['LastName'];
             </nav>
         </header>
 
-        <div class="content-container">
+        <div class="content-container-profile">
             <div class="search-categories" id="searchCategories">
                 <div class="search-group">
                     <i class="fas fa-search search-icon"></i>
@@ -134,7 +134,7 @@ $lastname = $user['LastName'];
                     </div>
                     
                     <div id="personal-info-section" class="profile-section active">
-                        <div class="content-section">
+                        <div class="content-section-profile">
                             <div class="section-header">
                                 <h2><i class="fas fa-user section-icon"></i> <span class="section-indicator">Profile Information</span></h2>
                                 <button class="edit-profile-btn" id="edit-profile-btn">
@@ -411,7 +411,7 @@ $lastname = $user['LastName'];
     </div>
 
     <!-- Toast Notification Container -->
-    <div id="toast-container"></div>
+    <div id="toast-container"></div> 
 
     <script src="../user/user.js"></script>
     <script>
