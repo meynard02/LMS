@@ -120,6 +120,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'admin') {
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -303,6 +304,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'admin') {
             </form>
         </div>
     </div>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../admin/adminHP.js"></script>
