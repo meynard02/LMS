@@ -2106,13 +2106,83 @@ const contentTemplates = {
         </div>
     `,
     'settings': `
-        <div class="content-section">
-            <div class="section-header">
-                <h2><span class="section-indicator">System</span> Settings</h2>
-                <div class="section-divider"></div>
-            </div>
-            <p>Configure system preferences and settings here.</p>
+        <!-- Paste this where your contentPanel is, inside <div class="panel-content" id="panelContent"> -->
+<div class="content-section" id="settingsSection">
+    <div class="section-header">
+        <h2><span class="section-indicator">System Settings</span></h2>
+        <div class="section-divider"></div>
+        <div class="tab-buttons">
+            <button onclick="showTab('logo')" class="tab-btn active"><i class="fas fa-image"></i> School Logo</button>
+            <button onclick="showTab('contact')" class="tab-btn"><i class="fas fa-address-book"></i> Contact Info</button>
+            <button onclick="showTab('hours')" class="tab-btn"><i class="fas fa-clock"></i> Operating Hours</button>
+            <button onclick="showTab('maxbooks')" class="tab-btn"><i class="fas fa-book"></i> Max Books</button>
+            <button onclick="showTab('duration')" class="tab-btn"><i class="fas fa-calendar-day"></i> Borrowing Duration</button>
+            <button onclick="showTab('backup')" class="tab-btn"><i class="fas fa-download"></i> Backup</button>
+            <button onclick="showTab('restore')" class="tab-btn"><i class="fas fa-upload"></i> Restore</button>
         </div>
+    </div>
+
+    <div class="tab-content" id="logo" style="display: block;">
+        <h3>Update School Logo</h3>
+        <input type="file" accept="image/*">
+        <p class="text-muted">Upload a new logo to replace the current website logo.</p>
+    </div>
+
+    <div class="tab-content" id="contact">
+        <h3>Contact Information</h3>
+        <input class="form-control" type="email" placeholder="Email">
+        <input class="form-control" type="tel" placeholder="Phone Number">
+        <input class="form-control" type="tel" placeholder="Telephone Number">
+    </div>
+
+    <div class="tab-content" id="hours">
+        <h3>Operating Days and Hours</h3>
+        <label>Open Days:</label><br>
+        <label><input type="checkbox"> Monday</label>
+        <label><input type="checkbox"> Tuesday</label>
+        <label><input type="checkbox"> Wednesday</label>
+        <label><input type="checkbox"> Thursday</label>
+        <label><input type="checkbox"> Friday</label>
+        <label><input type="checkbox"> Saturday</label>
+        <label><input type="checkbox"> Sunday</label><br><br>
+        <label>Operating Time:</label>
+        <input class="form-control" type="time"> to <input class="form-control" type="time">
+    </div>
+
+    <div class="tab-content" id="maxbooks">
+        <h3>Maximum Books Borrowed</h3>
+        <input class="form-control" type="number" placeholder="Enter maximum number of books">
+    </div>
+
+    <div class="tab-content" id="duration">
+        <h3>Borrowing Duration</h3>
+        <input class="form-control" type="number" placeholder="Enter number of days">
+    </div>
+
+    <div class="tab-content" id="backup">
+        <h3>Backup Data</h3>
+        <label>Select Data Type:</label>
+        <select class="form-control">
+            <option>User Management</option>
+            <option>Book Inventory</option>
+            <option>Borrow/Returns</option>
+        </select>
+        <label>Filter by:</label>
+        <select class="form-control">
+            <option>Day</option>
+            <option>Month</option>
+            <option>Year</option>
+        </select>
+        <button class="btn btn-primary"><i class="fas fa-download"></i> Download Excel</button>
+    </div>
+
+    <div class="tab-content" id="restore">
+        <h3>Restore Data</h3>
+        <input type="file" accept=".xlsx,.xls">
+        <button class="btn btn-primary"><i class="fas fa-upload"></i> Upload File</button>
+    </div>
+</div>
+
     `
 };
 
@@ -2203,3 +2273,14 @@ function initTooltips() {
 document.addEventListener('DOMContentLoaded', function() {
     initTooltips();
 });
+
+function showTab(tabId) {
+    const contents = document.querySelectorAll('.tab-content');
+    const buttons = document.querySelectorAll('.tab-btn');
+
+    contents.forEach(content => content.style.display = 'none');
+    buttons.forEach(btn => btn.classList.remove('active'));
+
+    document.getElementById(tabId).style.display = 'block';
+    document.querySelector(`.tab-btn[onclick="showTab('${tabId}')"]`).classList.add('active');
+}
