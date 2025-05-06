@@ -18,6 +18,7 @@ body {
 }
 
 .lmslogo {
+    position: absolute;
     display: block;
     margin: 0 auto 20px; 
     width: 500px; 
@@ -26,16 +27,26 @@ body {
     margin-left: 150px;
 }
 .logoslot {
-    display: block;
+    position: relative;
     margin: 0 auto 20px; /* Center the logo and add space below */
     width: 85px; /* Adjust the width as needed */
     height: auto; /* Maintain aspect ratio */
     border-radius: 50%; /* Optional: Make the logo circular */
-    margin-top: -78px;   
-    margin-left: -1113px; 
-    position: absolute;
-    
+    margin-bottom: -74px;   
+    margin-left: 254px; 
 }   
+
+.logofolder{
+    position: relative; 
+    margin: 0 auto 20px; /* Center the logo and add space below */
+    width: 100px; /* Adjust the width as needed */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 50%; /* Optional: Make the logo circular */
+    margin-bottom: 50px;
+    margin-left: 150px;
+    text-align: right; /* Center align content */  
+}
+
 .wrapper {
     width: 460px;
     background: rgba(255, 254, 254, 0.644);
@@ -45,9 +56,9 @@ body {
     color: rgb(0, 0, 0);
     border-radius: 5px;
     padding: 30px 20px;
-    text-align: center; /* Center align content */  
-    margin-left: 650px;  
-    position: absolute;
+    text-align: right; /* Center align content */  
+    margin-right: 100px;  
+    position: relative; 
 }
 
 .wrapper .logo {
