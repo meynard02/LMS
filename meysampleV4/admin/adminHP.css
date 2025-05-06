@@ -985,3 +985,343 @@ textarea.form-control {
 .tab-content select {
     margin: 10px 0;
 }
+
+/* Logo Upload Styles */
+.logo-upload-container {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.current-logo-preview, .logo-upload-form {
+    flex: 1;
+    background: var(--white);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.current-logo-preview:hover, .logo-upload-form:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.current-logo-preview h4, .preview-area h4 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+#currentLogoDisplay {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border: 2px dashed var(--medium-gray);
+    border-radius: 10px;
+    padding: 10px;
+    transition: var(--transition);
+}
+
+#currentLogoDisplay:hover {
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.upload-area {
+    border: 2px dashed var(--medium-gray);
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.upload-area:hover {
+    border-color: var(--primary-color);
+    background-color: rgba(3, 109, 44, 0.05);
+}
+
+.upload-icon {
+    font-size: 48px;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    transition: var(--transition);
+}
+
+.upload-area:hover .upload-icon {
+    transform: translateY(-5px);
+    color: var(--primary-light);
+}
+
+.upload-area p {
+    margin: 15px 0;
+    color: var(--dark-gray);
+}
+
+.preview-area {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#logoPreview {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: var(--transition);
+}
+
+#logoPreview:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.upload-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.upload-progress {
+    margin-top: 20px;
+    display: none;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background-color: var(--light-gray);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background-color: var(--primary-color);
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 14px;
+    color: var(--dark-gray);
+}
+
+/* Drag and drop effects */
+.upload-area.highlight {
+    border-color: var(--primary-color);
+    background-color: rgba(3, 109, 44, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .logo-upload-container {
+        flex-direction: column;
+    }
+}
+
+.settings-form {
+    padding: 20px;
+    animation: fadeInUp 0.5s ease;
+}
+
+.floating-label {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.floating-label input {
+    padding-left: 40px;
+    height: 50px;
+    transition: all 0.3s ease;
+    font-size: 16px;
+}
+
+.floating-label label {
+    position: absolute;
+    left: 40px;
+    top: 15px;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    color: #999;
+    background: none;
+    padding: 0;
+}
+
+.floating-label .input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+    font-size: 18px;
+}
+
+.floating-label .borrowicon {
+    position: absolute;
+    left: 15px;
+    top: 36%;
+    transform: translateY(-50%);
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+    font-size: 18px;
+}
+
+.floating-label .maxicon {
+    position: absolute;
+    left: 15px;
+    top: 36%;
+    transform: translateY(-50%);
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+    font-size: 18px;
+}
+
+.floating-label input:focus + label,
+.floating-label input:not(:placeholder-shown) + label {
+    top: -10px;
+    left: 35px;
+    font-size: 12px;
+    background: white;
+    padding: 0 5px;
+    color: var(--primary-color);
+}
+
+.floating-label input:focus ~ .input-icon {
+    color: var(--primary-light);
+}
+
+.input-hint {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+    padding-left: 40px;
+    margin-bottom: 10px;
+}
+
+.day-checkboxes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.day-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    padding-left: 35px;
+    user-select: none;
+}
+
+.day-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+}
+
+.day-checkbox:hover input ~ .checkmark {
+    background-color: #e0e0e0;
+}
+
+.day-checkbox input:checked ~ .checkmark {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.time-range {
+    margin-top: 30px;
+}
+
+.time-inputs {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.time-separator {
+    color: #666;
+    font-weight: bold;
+}
+
+.save-btn {
+    margin-top: 20px;
+    padding: 12px 25px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.save-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(3, 109, 44, 0.3);
+}
+
+.save-btn i {
+    margin-right: 8px;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Add to existing CSS */
+.save-success {
+    background-color: #28a745 !important;
+    animation: pulse 0.5s ease;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.days-heading {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+}
+
+.tab-content {
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
