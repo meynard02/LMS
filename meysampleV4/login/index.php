@@ -7,49 +7,15 @@
   <title>Login Form with Logo</title>
   <link rel="stylesheet" href="../login/style.css">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-  <style>
-        /* Popup modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-        
-        .modal-content {
-            background-color: #f8d7da;
-            color: #721c24;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #f5c6cb;
-            width: 80%;
-            max-width: 400px;
-            border-radius: 5px;
-            text-align: center;
-        }
-        
-        .close-btn {
-            color: #721c24;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        
-        .close-btn:hover {
-            color: #491217;
-        }
-    </style>
 </head>
 <body>
-  <img src="../photos/lmslogo.png" alt="lmslogo" class="lmslogo">
-  <div class="logochange">
-    <img src="../photos/logo.jpg" alt="Logo" class="logoslot">
-  </div>
+  <div class="logofolder">  
+    <img src="../photos/lmslogo.png" alt="lmslogo" class="lmslogo">
+    <div class="logochange">
+      <img src="../photos/logo.jpg" alt="Logo" class="logoslot">
+    </div>
+  </div>    
+
   <div class="wrapper">
     <img src="../photos/logo.jpg" alt="Logo" class="logo">
     <form action="../login/login.php" method="POST" id="login-form">
