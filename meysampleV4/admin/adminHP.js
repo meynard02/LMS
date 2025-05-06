@@ -2107,56 +2107,190 @@ const contentTemplates = {
     `,
     'settings': `
         <div class="content-section" id="settingsSection">
-     <div class="section-header">
-         <h2><span class="section-indicator">System Settings</span></h2>
-         <div class="section-divider"></div>
-         <div class="tab-buttons">
-             <button onclick="showTab('logo')" class="tab-btn active"><i class="fas fa-image"></i> School Logo</button>
-             <button onclick="showTab('contact')" class="tab-btn"><i class="fas fa-address-book"></i> Contact Info</button>
-             <button onclick="showTab('hours')" class="tab-btn"><i class="fas fa-clock"></i> Operating Hours</button>
-             <button onclick="showTab('maxbooks')" class="tab-btn"><i class="fas fa-book"></i> Max Books</button>
-             <button onclick="showTab('duration')" class="tab-btn"><i class="fas fa-calendar-day"></i> Borrowing Duration</button>
-             <button onclick="showTab('backup')" class="tab-btn"><i class="fas fa-download"></i> Backup</button>
-             <button onclick="showTab('restore')" class="tab-btn"><i class="fas fa-upload"></i> Restore</button>
-         </div>
+    <div class="section-header">
+        <h2><span class="section-indicator">System Settings</span></h2>
+        <div class="section-divider"></div>
+        <div class="tab-buttons">
+            <button onclick="showTab('logo')" class="tab-btn active"><i class="fas fa-image"></i> School Logo</button>
+            <button onclick="showTab('contact')" class="tab-btn"><i class="fas fa-address-book"></i> Contact Info</button>
+            <button onclick="showTab('hours')" class="tab-btn"><i class="fas fa-clock"></i> Operating Hours</button>
+            <button onclick="showTab('maxbooks')" class="tab-btn"><i class="fas fa-book"></i> Max Books</button>
+            <button onclick="showTab('duration')" class="tab-btn"><i class="fas fa-calendar-day"></i> Borrowing Duration</button>
+            <button onclick="showTab('backup')" class="tab-btn"><i class="fas fa-download"></i> Backup</button>
+            <button onclick="showTab('restore')" class="tab-btn"><i class="fas fa-upload"></i> Restore</button>
+        </div>
         </div>
     
         <div class="tab-content" id="logo" style="display: block;">
-            <h3>Update School Logo</h3>
-            <input type="file" accept="image/*">
-            <p class="text-muted">Upload a new logo to replace the current website logo.</p>
+    <h3>Update School Logo</h3>
+    <div class="logo-upload-container">
+        <div class="current-logo-preview">
+            <h4>Current Logo</h4>
+            <img id="currentLogoDisplay" src="../photos/logo.jpg" alt="Current Logo">
         </div>
-    
+        
+        <div class="logo-upload-form">
+            <div class="upload-area" id="dropZone">
+                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                <p>Drag & drop your logo here or</p>
+                <label for="logoUpload" class="btn btn-primary">
+                    <i class="fas fa-folder-open"></i> Browse Files
+                </label>
+                <input type="file" id="logoUpload" accept="image/*" style="display: none;">
+            </div>
+            <div class="preview-area" id="previewArea" style="display: none;">
+                <h4>New Logo Preview</h4>
+                <img id="logoPreview" src="#" alt="Logo Preview">
+                <div class="upload-actions">
+                    <button class="btn btn-secondary" id="cancelUpload">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button class="btn btn-primary" id="saveLogo">
+                        <i class="fas fa-save"></i> Save Logo
+                    </button>
+                </div>
+            </div>
+            <p class="text-muted">Recommended size: 200x200 pixels (PNG or JPG)</p>
+            <div class="upload-progress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <span class="progress-text">Uploading: 0%</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <!-- Contact Info Tab -->
         <div class="tab-content" id="contact">
-            <h3>Contact Information</h3>
-            <input class="form-control" type="email" placeholder="Email">
-            <input class="form-control" type="tel" placeholder="Phone Number">
-            <input class="form-control" type="tel" placeholder="Telephone Number">
+            <div class="settings-form">
+                <div class="form-group floating-label">
+                    <input type="email" id="contactEmail" class="form-control" value="library@spist.edu.ph" placeholder=" ">
+                    <label for="contactEmail">Email Address</label>
+                    <i class="fas fa-envelope input-icon"></i>
+                </div>
+                <div class="form-group floating-label">
+                    <input type="tel" id="contactPhone" class="form-control" value="+63 123 456 7890" placeholder=" ">
+                    <label for="contactPhone">Telephone Number</label>
+                    <i class="fas fa-phone input-icon"></i>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary save-btn" onclick="saveContactInfo()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </div>
         </div>
     
+        <!-- Operating Hours Tab -->
         <div class="tab-content" id="hours">
-            <h3>Operating Days and Hours</h3>
-            <label>Open Days:</label><br>
-            <label><input type="checkbox"> Monday</label>
-            <label><input type="checkbox"> Tuesday</label>
-            <label><input type="checkbox"> Wednesday</label>
-            <label><input type="checkbox"> Thursday</label>
-            <label><input type="checkbox"> Friday</label>
-            <label><input type="checkbox"> Saturday</label>
-            <label><input type="checkbox"> Sunday</label><br><br>
-            <label>Operating Time:</label>
-            <input class="form-control" type="time"> to <input class="form-control" type="time">
+            <div class="settings-form">
+                <h3 class="days-heading">Open Days</h3>
+                <div class="day-checkboxes">
+                    <label class="day-checkbox">
+                        <input type="checkbox" checked>
+                        <span class="checkmark">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        Monday
+                    </label>
+                    <label class="day-checkbox">
+                        <input type="checkbox" checked>
+                        <span class="checkmark">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        Tuesday
+                    </label>
+                    <label class="day-checkbox">
+                        <input type="checkbox" checked>
+                        <span class="checkmark">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        Wednesday
+                    </label>
+                    <label class="day-checkbox">
+                        <input type="checkbox" checked>
+                        <span class="checkmark">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        Thursday
+                    </label>
+                    <label class="day-checkbox">
+                        <input type="checkbox" checked>
+                        <span class="checkmark">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        Friday
+                    </label>
+                    <label class="day-checkbox">
+                        <input type="checkbox">
+                        <span class="checkmark">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        Saturday
+                    </label>
+                </div>
+
+                <div class="time-range">
+                    <h3>Operating Time</h3>
+                    <div class="time-inputs">
+                        <div class="form-group floating-label">
+                            <input type="time" id="openTime" class="form-control" value="08:00" placeholder=" ">
+                            <label for="openTime">Open Time</label>
+                            <i class="fas fa-door-open input-icon"></i>
+                        </div>
+                        <div class="time-separator">to</div>
+                        <div class="form-group floating-label">
+                            <input type="time" id="closeTime" class="form-control" value="17:00" placeholder=" ">
+                            <label for="closeTime">Close Time</label>
+                            <i class="fas fa-door-closed input-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary save-btn" onclick="saveOperatingHours()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </div>
         </div>
     
+        <!-- Max Books Tab -->
         <div class="tab-content" id="maxbooks">
-            <h3>Maximum Books Borrowed</h3>
-            <input class="form-control" type="number" placeholder="Enter maximum number of books">
+            <div class="settings-form">
+                <div class="form-group floating-label">
+                    <input type="number" id="maxBooks" class="form-control" value="5" min="1" max="10" placeholder=" ">
+                    <label for="maxBooks">Maximum Books per Student</label>
+                    <i class="fas fa-book maxicon"></i>
+                    <div class="input-hint">Between 1-10 books</div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary save-btn" onclick="saveMaxBooks()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </div>
         </div>
     
+        <!-- Borrow Duration Tab -->
         <div class="tab-content" id="duration">
-            <h3>Borrowing Duration</h3>
-            <input class="form-control" type="number" placeholder="Enter number of days">
+            <div class="settings-form">
+                <div class="form-group floating-label">
+                    <input type="number" id="borrowDuration" class="form-control" value="14" min="1" max="30" placeholder=" ">
+                    <label for="borrowDuration">Maximum Borrowing Days</label>
+                    <i class="fas fa-calendar-day borrowicon"></i>
+                    <div class="input-hint">Between 1-30 days</div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary save-btn" onclick="saveBorrowDuration()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </div>
         </div>
+    </div>
     
         <div class="tab-content" id="backup">
             <h3>Backup Data</h3>
@@ -2282,4 +2416,55 @@ function showTab(tabId) {
 
     document.getElementById(tabId).style.display = 'block';
     document.querySelector(`.tab-btn[onclick="showTab('${tabId}')"]`).classList.add('active');
+}
+
+function saveContactInfo() {
+    const email = document.getElementById('contactEmail').value;
+    // Add AJAX call to save to server here
+    showSaveSuccess('Contact information saved successfully!');
+}
+
+function saveOperatingHours() {
+    const days = [];
+    document.querySelectorAll('#hours input[type="checkbox"]:checked').forEach(checkbox => {
+        days.push(checkbox.parentElement.textContent.trim());
+    });
+    const openTime = document.getElementById('openTime').value;
+    const closeTime = document.getElementById('closeTime').value;
+    // Add AJAX call to save to server here
+    showSaveSuccess('Operating hours saved successfully!');
+}
+
+function saveMaxBooks() {
+    const maxBooks = document.getElementById('maxBooks').value;
+    // Add AJAX call to save to server here
+    showSaveSuccess('Maximum books setting saved!');
+}
+
+function saveBorrowDuration() {
+    const duration = document.getElementById('borrowDuration').value;
+    // Add AJAX call to save to server here
+    showSaveSuccess('Borrowing duration saved!');
+}
+
+function showSaveSuccess(message) {
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+    btn.classList.add('save-success');
+    
+    Swal.fire({
+        title: 'Success!',
+        text: message,
+        icon: 'success',
+        confirmButtonColor: '#036d2b',
+        timer: 1500,
+        showConfirmButton: false
+    });
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.classList.remove('save-success');
+    }, 2000);
 }
