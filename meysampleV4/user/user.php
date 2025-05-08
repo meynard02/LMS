@@ -36,6 +36,7 @@ $lastname = $user['LastName'];
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../user/user.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         .search-categories.hidden {
             display: none;
@@ -433,6 +434,7 @@ $lastname = $user['LastName'];
     <div id="toast-container"></div>
 
     <script src="../user/user.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // Initialize user data in JavaScript
         const currentUser = {
@@ -442,5 +444,6 @@ $lastname = $user['LastName'];
             lastname: "<?php echo $lastname; ?>"
         };
     </script>
+    <script src="../js/autoLogout.js"></script>
 </body>
 </html>
