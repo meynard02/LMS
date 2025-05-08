@@ -24,3 +24,26 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+
+// Contact Us Modal functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const contactLink = document.getElementById('contactUs');
+    const contactModal = document.getElementById('contactModal');
+    const closeBtn = contactModal.querySelector('.close-btn');
+
+    contactLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        contactModal.style.display = 'block';
+    });
+
+    closeBtn.addEventListener('click', function() {
+        contactModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target === contactModal) {
+            contactModal.style.display = 'none';
+        }
+    });
+});
