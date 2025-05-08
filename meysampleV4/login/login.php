@@ -17,6 +17,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'] ?? '';
     $email = $_POST['email'] ?? $username;
 
+    // Check if user is locked out
+    if (isset($_SESSION['login_attempts']) && $_SESSION['login_attempts'] >= 5) {
+        if (isset($_SESSION['lockout_time']) && (time() - $_SESSION['lockout_time']) < 30) {
+            header("Location: ../login/index.php?error=" . urlencode("Account is temporarily locked. Please try again later."));
+            exit();
+        } else {
+            // Reset attempts if lockout period has passed
+            $_SESSION['login_attempts'] = 0;
+            unset($_SESSION['lockout_time']);
+        }
+    }
+
     // Check if this is OTP verification step
     if (isset($_POST['otp'])) {
         $otp = $_POST['otp'];
@@ -117,6 +129,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     }
+
+    // If login fails, increment attempt counter
+    if (!password_verify($password, $userRow['password'])) {
+        $_SESSION['login_attempts'] = ($_SESSION['login_attempts'] ?? 0) + 1;
+        
+        if ($_SESSION['login_attempts'] >= 5) {
+            $_SESSION['lockout_time'] = time();
+            header("Location: ../login/index.php?error=" . urlencode("Too many failed attempts. Account locked for 30 seconds."));
+            exit();
+        }
+        
+        header("Location: ../login/index.php?error=" . urlencode("Invalid username or password. Please try again."));
+        exit();
+    }
+
+    // Reset attempts on successful login
+    unset($_SESSION['login_attempts']);
+    unset($_SESSION['lockout_time']);
 
     // If no matches found
     header("Location: ../login/index.php?error=" . urlencode("Invalid username or password. Please try again."));
