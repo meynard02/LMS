@@ -412,3 +412,84 @@ body {
 .close-btn:hover {
     color: rgb(27, 71, 23);
 }
+
+/* Attempt Counter and Lockout Timer Styles */
+.attempt-counter, .lockout-timer {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 10px 0;
+    font-size: 14px;
+    animation: fadeIn 0.3s ease;
+}
+
+.attempt-counter {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.lockout-timer {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.attempt-counter i, .lockout-timer i {
+    font-size: 20px;
+    margin-top: 2px;
+}
+
+.attempt-info, .timer-info {
+    flex: 1;
+}
+
+.attempt-progress, .timer-progress {
+    margin-top: 8px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: currentColor;
+    transition: width 0.3s ease;
+}
+
+.attempt-counter .progress-fill {
+    background-color: #856404;
+}
+
+.lockout-timer .progress-fill {
+    background-color: #721c24;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Disable form during lockout */
+.form-locked {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Shake animation for failed attempts */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.5s ease;
+}
