@@ -2002,7 +2002,58 @@ const contentTemplates = {
                 <h2><span class="section-indicator">Dashboard</span> Overview</h2>
                 <div class="section-divider"></div>
             </div>
-            <p>Welcome to the library management system dashboard.</p>
+            
+            <div class="dashboard-tables">
+                <div class="table-container" onclick="showContent('inventory')">
+                    <div class="table-header">
+                        <i class="fas fa-book"></i>
+                        <h3>Recent Book Accessions</h3>
+                    </div>
+                    <div class="table-content">
+                        <table class="snippet-table">
+                            <thead>
+                                <tr>
+                                    <th>Accession No.</th>
+                                    <th>Book Title</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentBooksTable">
+                                <!-- Will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer">
+                        <span>Click to view all books</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+
+                <div class="table-container" onclick="showContent('borrowing')">
+                    <div class="table-header">
+                        <i class="fas fa-exchange-alt"></i>
+                        <h3>Recent Borrowings/Returns</h3>
+                    </div>
+                    <div class="table-content">
+                        <table class="snippet-table">
+                            <thead>
+                                <tr>
+                                    <th>Book Title</th>
+                                    <th>Borrower</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentBorrowingsTable">
+                                <!-- Will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer">
+                        <span>Click to view all transactions</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
         </div>
     `,
 'inventory': `
@@ -2319,12 +2370,59 @@ const contentTemplates = {
         `
 };
 
+function loadRecentBooks() {
+    // This is a placeholder. Replace with actual API call
+    const recentBooks = [
+        { accessionNo: 'ACC001', title: 'Introduction to Programming', status: 'Available' },
+        { accessionNo: 'ACC002', title: 'Data Structures', status: 'Borrowed' },
+        { accessionNo: 'ACC003', title: 'Web Development', status: 'Available' },
+        { accessionNo: 'ACC004', title: 'Database Systems', status: 'Overdue' }
+    ];
+
+    const tbody = document.getElementById('recentBooksTable');
+    if (tbody) {
+        tbody.innerHTML = recentBooks.map(book => `
+            <tr>
+                <td>${book.accessionNo}</td>
+                <td>${book.title}</td>
+                <td><span class="status-badge status-${book.status.toLowerCase()}">${book.status}</span></td>
+            </tr>
+        `).join('');
+    }
+}
+
+function loadRecentBorrowings() {
+    // This is a placeholder. Replace with actual API call
+    const recentBorrowings = [
+        { title: 'Introduction to Programming', borrower: 'John Doe', status: 'Borrowed' },
+        { title: 'Data Structures', borrower: 'Jane Smith', status: 'Returned' },
+        { title: 'Web Development', borrower: 'Mike Johnson', status: 'Overdue' },
+        { title: 'Database Systems', borrower: 'Sarah Wilson', status: 'Borrowed' }
+    ];
+
+    const tbody = document.getElementById('recentBorrowingsTable');
+    if (tbody) {
+        tbody.innerHTML = recentBorrowings.map(borrowing => `
+            <tr>
+                <td>${borrowing.title}</td>
+                <td>${borrowing.borrower}</td>
+                <td><span class="status-badge status-${borrowing.status.toLowerCase()}">${borrowing.status}</span></td>
+            </tr>
+        `).join('');
+    }
+}
+
 function showContent(sectionId) {
     // Update navigation active state
     const navLinks = document.querySelectorAll(".nav-list a");
     navLinks.forEach(nav => nav.classList.remove("active"));
     event.currentTarget.classList.add("active");
     
+    if (sectionId === 'homepage') {
+        loadRecentBooks();
+        loadRecentBorrowings();
+    }
+
     // Show loading state
     const panelContent = document.getElementById("panelContent");
     panelContent.innerHTML = `
