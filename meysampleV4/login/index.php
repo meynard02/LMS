@@ -28,6 +28,28 @@
         <input type="password" id="password" name="password" placeholder="Password" required>
         <i class='bx bx-hide' id="togglePassword" aria-label="Toggle Password Visibility"></i>
       </div>
+      <div class="attempt-counter" id="attemptCounter" style="display: none;">
+        <i class='bx bx-error-circle'></i>
+        <div class="attempt-info">
+          <span id="attemptsLeft">5 attempts remaining</span>
+          <div class="attempt-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" id="attemptProgress"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lockout-timer" id="lockoutTimer" style="display: none;">
+        <i class='bx bx-lock-alt'></i>
+        <div class="timer-info">
+          <span id="timerDisplay">Account locked for 30 seconds</span>
+          <div class="timer-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" id="timerProgress"></div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="remember-forgot">
         <label><input type="checkbox">Remember me</label>
         <a href="../Forgot Password/FP.php">Forgot Password?</a>
