@@ -1,7 +1,7 @@
 class AutoLogout {
     constructor() {
         this.timeout = 5 * 60 * 1000; // 5 minutes
-        this.warningTime = 1 * 60 * 1000; // 1 minute warning
+        this.warningTime = 30 * 1000; // 30 seconds warning (changed from 1 minute)
         this.timer = null;
         this.warningTimer = null;
         this.lastActivity = Date.now();
@@ -48,8 +48,8 @@ class AutoLogout {
                     </div>
                     <div class="warning-text">
                         <h3>Your Session is About to Expire</h3>
-                        <p>You've been inactive for 4 minutes.</p>
-                        <p>Your session will expire in <span class="countdown">1:00</span></p>
+                        <p>You've been inactive for 4 minutes and 30 seconds.</p>
+                        <p>Your session will expire in <span class="countdown">0:30</span></p>
                     </div>
                     <div class="warning-progress">
                         <div class="progress-bar">
@@ -66,7 +66,7 @@ class AutoLogout {
             cancelButtonColor: '#dc3545',
             allowOutsideClick: false,
             allowEscapeKey: false,
-            timer: 60000,
+            timer: 30000, // Changed to 30 seconds
             timerProgressBar: true,
             customClass: {
                 popup: 'animated-popup',
@@ -90,7 +90,7 @@ class AutoLogout {
     }
     
     startCountdown(popup) {
-        let timeLeft = 60;
+        let timeLeft = 30; // Changed to 30 seconds
         const countdownElement = popup.querySelector('.countdown');
         
         const countdownInterval = setInterval(() => {
@@ -108,7 +108,7 @@ class AutoLogout {
     animateProgressBar(popup) {
         const progressFill = popup.querySelector('.progress-fill');
         progressFill.style.width = '100%';
-        progressFill.style.transition = 'width 60s linear';
+        progressFill.style.transition = 'width 30s linear'; // Changed to 30 seconds
         setTimeout(() => {
             progressFill.style.width = '0%';
         }, 100);
