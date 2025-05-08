@@ -35,9 +35,28 @@
       <button type="submit" class="btn">Login</button>
       <div class="register-link">
         <p>Don't have an account? <a href="../register/register.php">Register</a></p>
+        <p class="contact-link"><a href="#" id="contactUs">Contact Us</a></p>
       </div>
     </form>
   </div>
+
+  <div id="contactModal" class="modal">
+    <div class="modal-content contact-modal">
+      <span class="close-btn">&times;</span>
+      <h2>Contact Information</h2>
+      <div class="contact-info">
+        <div class="contact-item">
+          <i class='bx bxs-envelope'></i>
+          <span>support@spist.edu.ph</span>
+        </div>
+        <div class="contact-item">
+          <i class='bx bxs-phone'></i>
+          <span>+63 123 456 7890</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="errorModal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
