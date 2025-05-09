@@ -1,0 +1,246 @@
+<?php
+// admin_operations.php
+require_once '../php/connection.php';
+header('Content-Type: application/json');
+
+class AdminOperations {
+    private $conn;
+    
+    public function __construct($connection) {
+        $this->conn = $connection;
+    }
+    
+    public function handleRequest() {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                throw new Exception('Invalid request method');
+            }
+            
+            $action = $_POST['action'] ?? '';
+            $adminId = $_POST['adminId'] ?? null;
+            
+            switch ($action) {
+                case 'update':
+                    $this->updateAdmin();
+                    break;
+                    
+                case 'toggleStatus':
+                    $this->toggleAdminStatus();
+                    break;
+                    
+                case 'delete':
+                    $this->deleteAdmin();
+                    break;
+                    
+                case 'add':
+                    $this->addAdmin();
+                    break;
+                    
+                default:
+                    throw new Exception('Invalid action specified');
+            }
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+    
+    private function validatePassword($password) {
+        if (empty($password)) {
+            throw new Exception('Password is required');
+        }
+        
+        if (strlen($password) < 8) {
+            throw new Exception('Password must be at least 8 characters long');
+        }
+        
+        if (!preg_match('/[A-Z]/', $password)) {
+            throw new Exception('Password must contain at least one uppercase letter');
+        }
+        
+        if (!preg_match('/[a-z]/', $password)) {
+            throw new Exception('Password must contain at least one lowercase letter');
+        }
+        
+        if (!preg_match('/[0-9]/', $password)) {
+            throw new Exception('Password must contain at least one number');
+        }
+        
+        if (!preg_match('/[\W_]/', $password)) {
+            throw new Exception('Password must contain at least one special character');
+        }
+        
+        return true;
+    }
+    
+    private function updateAdmin() {
+        $this->validateAdminId();
+        $requiredFields = ['email', 'firstName', 'lastName', 'username'];
+        $this->validateRequiredFields($requiredFields);
+        
+        $email = $_POST['email'];
+        $firstName = $_POST['firstName'];
+        $lastName = $_POST['lastName'];
+        $username = $_POST['username'];
+        $password = $_POST['password'] ?? null;
+        
+        $query = "UPDATE admin SET 
+                 AdminEmail = ?,
+                 AdminFName = ?,
+                 AdminLName = ?,
+                 AdminUsername = ?";
+        
+        $params = [$email, $firstName, $lastName, $username];
+        $types = "ssss";
+        
+        if (!empty($password)) {
+            $this->validatePassword($password);
+            $query .= ", AdminPassword = ?";
+            $params[] = password_hash($password, PASSWORD_DEFAULT);
+            $types .= "s";
+        }
+        
+        $query .= " WHERE AdminID = ?";
+        $params[] = $_POST['adminId'];
+        $types .= "i";
+        
+        $this->executeQuery($query, $types, $params);
+        
+        echo json_encode([
+            'success' => true,
+            'message' => 'Admin updated successfully'
+        ]);
+    }
+    
+    private function toggleAdminStatus() {
+        $this->validateAdminId();
+        $currentStatus = $_POST['currentStatus'] ?? '';
+        
+        if (!in_array($currentStatus, ['Active', 'Inactive'])) {
+            throw new Exception('Invalid current status');
+        }
+        
+        $newStatus = $currentStatus === 'Active' ? 'Inactive' : 'Active';
+        
+        $this->executeQuery(
+            "UPDATE admin SET Status = ? WHERE AdminID = ?",
+            "si",
+            [$newStatus, $_POST['adminId']]
+        );
+        
+        echo json_encode([
+            'success' => true,
+            'newStatus' => $newStatus
+        ]);
+    }
+    
+    private function deleteAdmin() {
+        $this->validateAdminId();
+        
+        $this->executeQuery(
+            "DELETE FROM admin WHERE AdminID = ?",
+            "i",
+            [$_POST['adminId']]
+        );
+        
+        echo json_encode(['success' => true]);
+    }
+    
+    private function addAdmin() {
+        $requiredFields = ['email', 'firstName', 'lastName', 'username', 'password'];
+        $this->validateRequiredFields($requiredFields);
+        
+        $password = $_POST['password'];
+        $this->validatePassword($password);
+        
+        // Check if username or email already exists
+        $checkQuery = "SELECT AdminID FROM admin WHERE AdminUsername = ? OR AdminEmail = ?";
+        $checkStmt = $this->conn->prepare($checkQuery);
+        $checkStmt->bind_param("ss", $_POST['username'], $_POST['email']);
+        $checkStmt->execute();
+        $checkStmt->store_result();
+        
+        if ($checkStmt->num_rows > 0) {
+            throw new Exception('Username or email already exists');
+        }
+        
+        $this->executeQuery(
+            "INSERT INTO admin (AdminEmail, AdminFName, AdminLName, AdminUsername, AdminPassword, Status, created_at) 
+             VALUES (?, ?, ?, ?, ?, 'Active', NOW())",
+            "sssss",
+            [
+                $_POST['email'],
+                $_POST['firstName'],
+                $_POST['lastName'],
+                $_POST['username'],
+                password_hash($password, PASSWORD_DEFAULT)
+            ]
+        );
+        
+        echo json_encode(['success' => true]);
+    }
+    
+    private function validateAdminId() {
+        if (empty($_POST['adminId'])) {
+            throw new Exception('Admin ID is required');
+        }
+        
+        // Verify admin exists
+        $checkQuery = "SELECT AdminID FROM admin WHERE AdminID = ?";
+        $checkStmt = $this->conn->prepare($checkQuery);
+        $checkStmt->bind_param("i", $_POST['adminId']);
+        $checkStmt->execute();
+        $checkStmt->store_result();
+        
+        if ($checkStmt->num_rows === 0) {
+            throw new Exception('Admin not found');
+        }
+    }
+    
+    private function validateRequiredFields($fields) {
+        foreach ($fields as $field) {
+            if (empty($_POST[$field])) {
+                throw new Exception(ucfirst($field) . ' is required');
+            }
+        }
+    }
+    
+    private function executeQuery($query, $types, $params) {
+        $this->conn->begin_transaction();
+        
+        try {
+            $stmt = $this->conn->prepare($query);
+            if (!$stmt) {
+                throw new Exception('Prepare failed: ' . $this->conn->error);
+            }
+            
+            $stmt->bind_param($types, ...$params);
+            
+            if (!$stmt->execute()) {
+                throw new Exception('Execute failed: ' . $stmt->error);
+            }
+            
+            $this->conn->commit();
+        } catch (Exception $e) {
+            $this->conn->rollback();
+            throw $e;
+        } finally {
+            if (isset($stmt)) {
+                $stmt->close();
+            }
+        }
+    }
+}
+
+// Initialize and handle request
+try {
+    $adminOps = new AdminOperations($conn);
+    $adminOps->handleRequest();
+} finally {
+    if (isset($conn)) {
+        $conn->close();
+    }
+}
+?>
