@@ -4,21 +4,39 @@ require_once '../php/connection.php';
 header('Content-Type: application/json');
 
 $search = $_GET['search'] ?? '';
+$status = $_GET['status'] ?? 'all';
 
 try {
     // Only select the fields we need for display
     $query = "SELECT Email, FirstName, LastName, Status FROM user ";
+    $params = [];
+    $types = "";
+    
+    $conditions = [];
     
     if (!empty($search)) {
-        $query .= " WHERE (Email LIKE ? OR FirstName LIKE ? OR LastName LIKE ?)";
+        $conditions[] = "(Email LIKE ? OR FirstName LIKE ? OR LastName LIKE ?)";
         $searchTerm = "%$search%";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("sss", $searchTerm, $searchTerm, $searchTerm);
-        $stmt->execute();
-        $result = $stmt->get_result();
-    } else {
-        $result = $conn->query($query);
+        $params = array_merge($params, [$searchTerm, $searchTerm, $searchTerm]);
+        $types .= "sss";
     }
+    
+    if ($status !== 'all') {
+        $conditions[] = "Status = ?";
+        $params[] = $status;
+        $types .= "s";
+    }
+    
+    if (!empty($conditions)) {
+        $query .= " WHERE " . implode(" AND ", $conditions);
+    }
+    
+    $stmt = $conn->prepare($query);
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result();
     
     $students = [];
     while ($row = $result->fetch_assoc()) {
