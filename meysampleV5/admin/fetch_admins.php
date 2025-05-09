@@ -2,17 +2,35 @@
 include '../php/connection.php';
 
 $search = $_GET['search'] ?? '';
+$status = $_GET['status'] ?? 'all';
 
 try {
+    $query = "SELECT AdminID, AdminEmail, AdminFName, AdminLName, AdminUsername, Status FROM admin";
+    $params = [];
+    $types = "";
+    
+    $conditions = [];
+    
     if (!empty($search)) {
-        // Fetch single admin by ID
-        $stmt = $conn->prepare("SELECT AdminID, AdminEmail, AdminFName, AdminLName, AdminUsername, Status FROM admin WHERE AdminID = ?");
-        $stmt->bind_param("s", $search);
-    } else {
-        // Fetch all admins
-        $stmt = $conn->prepare("SELECT AdminID, AdminEmail, AdminFName, AdminLName, AdminUsername, Status FROM admin");
+        $conditions[] = "AdminID = ?";
+        $params[] = $search;
+        $types .= "s";
     }
     
+    if ($status !== 'all') {
+        $conditions[] = "Status = ?";
+        $params[] = $status;
+        $types .= "s";
+    }
+    
+    if (!empty($conditions)) {
+        $query .= " WHERE " . implode(" AND ", $conditions);
+    }
+    
+    $stmt = $conn->prepare($query);
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
+    }
     $stmt->execute();
     $result = $stmt->get_result();
     
