@@ -1607,16 +1607,30 @@ function showToast(message, type) {
 
 // Confirm logout
 function confirmLogout() {
-    const confirmLogout = confirm("Are you sure you want to logout?");
-    if (confirmLogout) {
-        // Show loading state
-        document.body.style.opacity = '0.5';
-        document.querySelector('.main-content').innerHTML = '<div class="logout-loading"><i class="fas fa-spinner fa-spin"></i> Logging out...</div>';
-        
-        // Simulate logout process
-        setTimeout(() => {
-            window.location.href = "../login/index.php";
-        }, 1000);
-    }
+    Swal.fire({
+        title: 'Logout Confirmation',
+        text: 'Are you sure you want to logout?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#4CAF50',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, logout',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Show loading state
+            Swal.fire({
+                title: 'Logging out...',
+                timer: 1000,
+                timerProgressBar: true,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            }).then(() => {
+                // Redirect to login page
+                window.location.href = "../login/index.php";
+            });
+        }
+    });
     return false;
 }
