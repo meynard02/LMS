@@ -469,13 +469,13 @@ async function loadDashboardStats() {
                     <td>${admin.AdminLName}</td>
                     <td><span class="badge ${admin.Status === 'Active' ? 'badge-success' : 'badge-danger'}">${admin.Status}</span></td>
                     <td>
+                        <input type="hidden" class="admin-id" value="${admin.AdminID}">
                         <button class="btn-icon" onclick="editAdmin('${admin.AdminID}', 'admins')">
                             <i class="fas fa-edit"></i>
                         </button>
                         <button class="btn-icon" onclick="toggleAdminStatus('${admin.AdminID}', '${admin.Status}', 'admins')">
                             <i class="fas ${admin.Status === 'Active' ? 'fa-user-slash' : 'fa-user-check'}"></i>
                         </button>
-                        
                     </td>
                 `;
                 
@@ -508,13 +508,13 @@ async function loadDashboardStats() {
                     <td>${admin.AdminLName}</td>
                     <td><span class="badge ${admin.Status === 'Active' ? 'badge-success' : 'badge-danger'}">${admin.Status}</span></td>
                     <td>
+                        <input type="hidden" class="admin-id" value="${admin.AdminID}">
                         <button class="btn-icon" onclick="editAdmin('${admin.AdminID}', 'admins')">
                             <i class="fas fa-edit"></i>
                         </button>
                         <button class="btn-icon" onclick="toggleAdminStatus('${admin.AdminID}', '${admin.Status}', 'admins')">
                             <i class="fas ${admin.Status === 'Active' ? 'fa-user-slash' : 'fa-user-check'}"></i>
                         </button>
-                        
                     </td>
                 `;
                 
@@ -535,7 +535,7 @@ async function loadDashboardStats() {
     async function editAdmin(adminId, userType) {
         try {
             // First fetch current admin data
-            const response = await fetch(`fetch_admins.php?search=${adminId}`);
+            const response = await fetch(`fetch_admins.php?search=${encodeURIComponent(adminId)}`);
             const adminData = await response.json();
             
             if (!adminData.success || !adminData.data[0]) {
@@ -543,6 +543,11 @@ async function loadDashboardStats() {
             }
             
             const admin = adminData.data[0];
+            
+            // Verify that we got the correct admin
+            if (admin.AdminID != adminId) {
+                throw new Error('Incorrect admin data retrieved');
+            }
             
             const { value: formValues } = await Swal.fire({
                 title: 'Edit Admin',
@@ -580,7 +585,7 @@ async function loadDashboardStats() {
                         lastName: document.getElementById('editLastName').value,
                         username: document.getElementById('editUsername').value,
                         password: password,
-                        adminId: adminId // Make sure to include adminId in the form values
+                        adminId: admin.AdminID // Use the correct AdminID from the fetched data
                     };
                 }
             });
@@ -593,7 +598,7 @@ async function loadDashboardStats() {
                     },
                     body: new URLSearchParams({
                         action: 'update',
-                        adminId: formValues.adminId, // Use the adminId from formValues
+                        adminId: formValues.adminId,
                         email: formValues.email,
                         firstName: formValues.firstName,
                         lastName: formValues.lastName,
@@ -910,6 +915,7 @@ async function loadDashboardStats() {
                         <td>${user.AdminLName}</td>
                         <td><span class="badge ${user.Status === 'Active' ? 'badge-success' : 'badge-danger'}">${user.Status}</span></td>
                         <td>
+                            <input type="hidden" class="admin-id" value="${user.AdminID}">
                             <button class="btn-icon" onclick="editAdmin('${user.AdminID}', 'admins')">
                                 <i class="fas fa-edit"></i>
                             </button>
