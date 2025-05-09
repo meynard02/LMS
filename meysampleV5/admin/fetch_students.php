@@ -1,24 +1,20 @@
 <?php
-require_once '../php/connection.php';
-
-header('Content-Type: application/json');
+include '../php/connection.php';
 
 $search = $_GET['search'] ?? '';
 $status = $_GET['status'] ?? 'all';
 
 try {
-    // Only select the fields we need for display
-    $query = "SELECT Email, FirstName, LastName, Status FROM user ";
+    $query = "SELECT AdminID, AdminEmail, AdminFName, AdminLName, AdminUsername, Status FROM admin";
     $params = [];
     $types = "";
     
     $conditions = [];
     
     if (!empty($search)) {
-        $conditions[] = "(Email LIKE ? OR FirstName LIKE ? OR LastName LIKE ?)";
-        $searchTerm = "%$search%";
-        $params = array_merge($params, [$searchTerm, $searchTerm, $searchTerm]);
-        $types .= "sss";
+        $conditions[] = "AdminID = ?";
+        $params[] = $search;
+        $types .= "s";
     }
     
     if ($status !== 'all') {
@@ -38,15 +34,19 @@ try {
     $stmt->execute();
     $result = $stmt->get_result();
     
-    $students = [];
+    $admins = [];
     while ($row = $result->fetch_assoc()) {
-        $students[] = $row;
+        $admins[] = $row;
     }
     
-    echo json_encode(['success' => true, 'data' => $students]);
+    echo json_encode([
+        'success' => true,
+        'data' => $admins
+    ]);
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    echo json_encode([
+        'success' => false,
+        'error' => $e->getMessage()
+    ]);
 }
-
-$conn->close();
 ?>
