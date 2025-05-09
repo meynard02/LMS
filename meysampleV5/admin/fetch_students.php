@@ -1,30 +1,28 @@
 <?php
-include '../php/connection.php';
+require_once '../php/connection.php';
 
-$search = $_GET['search'] ?? '';
-$status = $_GET['status'] ?? 'all';
+header('Content-Type: application/json');
+
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+$status = isset($_GET['status']) ? $_GET['status'] : 'all';
 
 try {
-    $query = "SELECT AdminID, AdminEmail, AdminFName, AdminLName, AdminUsername, Status FROM admin";
+    // Only select the fields we need for display
+    $query = "SELECT Email, FirstName, LastName, Status FROM user WHERE 1=1";
     $params = [];
     $types = "";
     
-    $conditions = [];
-    
     if (!empty($search)) {
-        $conditions[] = "AdminID = ?";
-        $params[] = $search;
-        $types .= "s";
+        $query .= " AND (Email LIKE ? OR FirstName LIKE ? OR LastName LIKE ?)";
+        $searchTerm = "%$search%";
+        $params = array_merge($params, [$searchTerm, $searchTerm, $searchTerm]);
+        $types .= "sss";
     }
     
     if ($status !== 'all') {
-        $conditions[] = "Status = ?";
+        $query .= " AND Status = ?";
         $params[] = $status;
         $types .= "s";
-    }
-    
-    if (!empty($conditions)) {
-        $query .= " WHERE " . implode(" AND ", $conditions);
     }
     
     $stmt = $conn->prepare($query);
@@ -34,19 +32,15 @@ try {
     $stmt->execute();
     $result = $stmt->get_result();
     
-    $admins = [];
+    $students = [];
     while ($row = $result->fetch_assoc()) {
-        $admins[] = $row;
+        $students[] = $row;
     }
     
-    echo json_encode([
-        'success' => true,
-        'data' => $admins
-    ]);
+    echo json_encode(['success' => true, 'data' => $students]);
 } catch (Exception $e) {
-    echo json_encode([
-        'success' => false,
-        'error' => $e->getMessage()
-    ]);
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
+
+$conn->close();
 ?>
