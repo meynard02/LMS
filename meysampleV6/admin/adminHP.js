@@ -2425,22 +2425,38 @@ async function loadDashboardStats() {
         </div>
         
             <div class="tab-content" id="backup">
-                <h3>Backup Data</h3>
-                <label>Select Data Type:</label>
-                <select class="form-control">
-                    <option>User Management</option>
-                    <option>Book Inventory</option>
-                    <option>Borrow/Returns</option>
-                </select>
-                <label>Filter by:</label>
-                <select class="form-control">
-                    <option>Day</option>
-                    <option>Month</option>
-                    <option>Year</option>
-                </select>
-                <button class="btn btn-primary"><i class="fas fa-download"></i> Download SQL file</button>
-            </div>
+    <div class="settings-form">
+        <h3>Backup Data</h3>
+        <div class="form-group">
+            <label for="backupDataType">Select Data Type:</label>
+            <select id="backupDataType" class="form-control">
+                <option value="all">All Data</option>
+                <option value="admins">Admin Users</option>
+                <option value="users">Regular Users</option>
+                <option value="books">Books Inventory</option>
+                <option value="transactions">Borrowing Records</option>
+            </select>
         </div>
+        <div class="form-group">
+            <label for="backupFilter">Filter by:</label>
+            <select id="backupFilter" class="form-control">
+                <option value="all">All Data</option>
+                <option value="day">Day</option>
+                <option value="month">Month</option>
+                <option value="year">Year</option>
+            </select>
+        </div>
+        <div class="form-group" id="dateRangeContainer" style="display: none;">
+            <label for="backupDateRange">Select Date:</label>
+            <input type="date" id="backupDateRange" class="form-control">
+        </div>
+        <div class="form-actions">
+            <button class="btn btn-primary" onclick="generateBackup()">
+                <i class="fas fa-download"></i> Generate Backup
+            </button>
+        </div>
+    </div>
+</div>
         
             `
     };
@@ -2687,6 +2703,77 @@ async function loadDashboardStats() {
             console.error('Error loading dashboard data:', error);
         }
     }
+
+async function generateBackup() {
+    try {
+        const dataType = document.getElementById('backupDataType').value;
+        const filterType = document.getElementById('backupFilter').value;
+        let dateRange = null;
+        
+        if (filterType !== 'all') {
+            dateRange = document.getElementById('backupDateRange').value;
+            if (!dateRange) {
+                throw new Error('Please select a date');
+            }
+        }
+
+        showLoading(true);
+        
+        // Create a hidden iframe for download
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        
+        // Create a form
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'backup_operations.php';
+        form.target = iframe.name = 'downloadFrame';
+        
+        // Add parameters
+        const addInput = (name, value) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+        };
+        
+        addInput('action', 'generate');
+        addInput('dataType', dataType);
+        addInput('filterType', filterType);
+        if (dateRange) addInput('dateRange', dateRange);
+        
+        // Submit form
+        document.body.appendChild(form);
+        form.submit();
+        
+        // Clean up after download
+        setTimeout(() => {
+            document.body.removeChild(form);
+            document.body.removeChild(iframe);
+            showLoading(false);
+            
+            // Check if download was successful
+            Swal.fire({
+                title: 'Backup Generated',
+                text: 'The backup file has been downloaded successfully',
+                icon: 'success',
+                confirmButtonColor: '#036d2b'
+            });
+        }, 3000);
+        
+    } catch (error) {
+        console.error('Error generating backup:', error);
+        showLoading(false);
+        Swal.fire({
+            title: 'Error!',
+            text: error.message || 'Failed to generate backup',
+            icon: 'error',
+            confirmButtonColor: '#036d2b'
+        });
+    }
+}
 
     // Update the showContent function to load dashboard data when showing homepage
     function showContent(sectionId) {
