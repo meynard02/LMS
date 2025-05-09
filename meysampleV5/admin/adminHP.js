@@ -56,13 +56,23 @@
     function showUserManagement(userType) {
         closeModal('userTypeModal');
         
+        // Update navigation active state
+        const navLinks = document.querySelectorAll(".nav-list a");
+        navLinks.forEach(nav => {
+            nav.classList.remove("active");
+            // Add active class to User Management nav item
+            if (nav.querySelector('i.fa-users-cog')) {
+                nav.classList.add("active");
+            }
+        });
+        
         let content = '';
         const title = userType === 'students' ? 'Student Management' : 'Admin Management';
         
         // Only show add button for admin management
         const addButton = userType === 'admins' ? 
-            `<button class="btn btn-primary" onclick="showAddUserModal('${userType}')">
-                <i class="fas fa-plus"></i> Add New ${userType === 'students' ? 'Student' : 'Admin'}
+            `<button class="btn btn-primary" onclick="showAddAdminModal()">
+                <i class="fas fa-plus"></i> Add New Admin
             </button>` : '';
         
         content = `
@@ -75,7 +85,14 @@
                 <div class="action-bar">
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="searchUsers" placeholder="Search ${userType}...">
+                        <input type="text" id="${userType}Search" placeholder="Search ${userType}...">
+                    </div>
+                    <div class="filter-options">
+                        <select id="${userType}StatusFilter" onchange="filterByUserStatus('${userType}')">
+                            <option value="all">All Status</option>
+                            <option value="Active">Active</option>
+                            <option value="${userType === 'students' ? 'Suspended' : 'Inactive'}">${userType === 'students' ? 'Suspended' : 'Inactive'}</option>
+                        </select>
                     </div>
                     ${addButton}
                 </div>
@@ -92,7 +109,7 @@
                             </tr>
                         </thead>
                         <tbody id="userTableBody">
-                            <!-- Users will be loaded here from database -->
+                            <!-- ${userType} will be loaded here from database -->
                         </tbody>
                     </table>
                 </div>
@@ -114,8 +131,24 @@
             panelContent.innerHTML = content;
             panelContent.style.opacity = 1;
             
-            // Load users from database (placeholder for your actual implementation)
-            loadUsers(userType);
+            // Add event listener for search input
+            const searchInput = document.getElementById(`${userType}Search`);
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    if (userType === 'students') {
+                        searchStudents(e.target.value);
+                    } else {
+                        searchAdmins(e.target.value);
+                    }
+                });
+            }
+            
+            // Load users from database
+            if (userType === 'students') {
+                loadUsers(userType);
+            } else {
+                loadAdmins();
+            }
         }, 300);
     }
 
@@ -251,13 +284,13 @@
     async function toggleUserStatus(email, currentStatus, userType) {
         try {
             const result = await Swal.fire({
-                title: `Confirm ${currentStatus === 'Active' ? 'Suspend' : 'Activate'}`,
-                text: `Are you sure you want to ${currentStatus === 'Active' ? 'Suspend' : 'Activate'} this user?`,
+                title: `Confirm ${currentStatus === 'Active' ? (userType === 'students' ? 'Suspend' : 'Deactivate') : 'Activate'}`,
+                text: `Are you sure you want to ${currentStatus === 'Active' ? (userType === 'students' ? 'Suspend' : 'Deactivate') : 'Activate'} this ${userType === 'students' ? 'student' : 'admin'}?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#036d2b',
                 cancelButtonColor: '#6c757d',
-                confirmButtonText: `Yes, ${currentStatus === 'Active' ? 'Suspend' : 'Activate'}`,
+                confirmButtonText: `Yes, ${currentStatus === 'Active' ? (userType === 'students' ? 'Suspend' : 'Deactivate') : 'Activate'}`,
                 cancelButtonText: 'Cancel'
             });
             
@@ -283,7 +316,7 @@
                 
                 await Swal.fire({
                     title: 'Success!',
-                    text: `User has been ${data.newStatus === 'Active' ? 'Activated' : 'Suspended'}.`,
+                    text: `${userType === 'students' ? 'Student' : 'Admin'} has been ${data.newStatus === 'Active' ? 'Activated' : (userType === 'students' ? 'Suspended' : 'Deactivated')}.`,
                     icon: 'success',
                     confirmButtonColor: '#036d2b'
                 });
@@ -619,7 +652,7 @@
                 
                 await Swal.fire({
                     title: 'Success!',
-                    text: `Admin has been ${data.newStatus === 'Active' ? 'Activated' : 'Deactivated'}.`,
+                    text: `${userType === 'students' ? 'Student' : 'Admin'} has been ${data.newStatus === 'Active' ? 'Activated' : (userType === 'students' ? 'Suspended' : 'Deactivated')}.`,
                     icon: 'success',
                     confirmButtonColor: '#036d2b'
                 });
@@ -806,87 +839,74 @@
         }
     }
 
-    // Update the showUserManagement function to handle admin management
-    function showUserManagement(userType) {
-        closeModal('userTypeModal');
+    // Add new function to filter users by status
+    async function filterByUserStatus(userType) {
+        const statusFilter = document.getElementById(`${userType}StatusFilter`).value;
+        const searchTerm = document.getElementById(`${userType}Search`).value;
         
-        let content = '';
-        const title = userType === 'students' ? 'Student Management' : 'Admin Management';
-        
-        // Only show add button for admin management
-        const addButton = userType === 'admins' ? 
-            `<button class="btn btn-primary" onclick="showAddAdminModal()">
-                <i class="fas fa-plus"></i> Add New Admin
-            </button>` : '';
-        
-        content = `
-            <div class="content-section">
-                <div class="section-header">
-                    <h2><span class="section-indicator">${title}</span></h2>
-                    <div class="section-divider"></div>
-                </div>
-                
-                <div class="action-bar">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="${userType}Search" placeholder="Search ${userType}...">
-                    </div>
-                    ${addButton}
-                </div>
-                
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Email</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="userTableBody">
-                            <!-- ${userType} will be loaded here from database -->
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="pagination">
-                    <button class="btn-pagination"><i class="fas fa-chevron-left"></i></button>
-                    <span class="page-active">1</span>
-                    <span>2</span>
-                    <span>3</span>
-                    <button class="btn-pagination"><i class="fas fa-chevron-right"></i></button>
-                </div>
-            </div>
-        `;
-        
-        // Update content with fade animation
-        const panelContent = document.getElementById("panelContent");
-        panelContent.style.opacity = 0;
-        setTimeout(() => {
-            panelContent.innerHTML = content;
-            panelContent.style.opacity = 1;
-            
-            // Add event listener for search input
-            const searchInput = document.getElementById(`${userType}Search`);
-            if (searchInput) {
-                searchInput.addEventListener('input', (e) => {
-                    if (userType === 'students') {
-                        searchStudents(e.target.value);
-                    } else {
-                        searchAdmins(e.target.value);
-                    }
-                });
-            }
-            
-            // Load users from database
+        try {
+            let response;
             if (userType === 'students') {
-                loadUsers(userType);
+                response = await fetch(`fetch_students.php?status=${statusFilter}&search=${encodeURIComponent(searchTerm)}`);
             } else {
-                loadAdmins();
+                response = await fetch(`fetch_admins.php?status=${statusFilter}&search=${encodeURIComponent(searchTerm)}`);
             }
-        }, 300);
+            
+            const data = await response.json();
+            
+            if (!data.success) {
+                throw new Error(data.error || 'Failed to filter users');
+            }
+            
+            const tableBody = document.getElementById("userTableBody");
+            tableBody.innerHTML = '';
+            
+            data.data.forEach(user => {
+                const row = document.createElement('tr');
+                
+                if (userType === 'students') {
+                    row.innerHTML = `
+                        <td>${user.Email}</td>
+                        <td>${user.FirstName}</td>
+                        <td>${user.LastName}</td>
+                        <td><span class="badge ${user.Status === 'Active' ? 'badge-success' : 'badge-danger'}">${user.Status}</span></td>
+                        <td>
+                            <button class="btn-icon" onclick="editUser('${user.Email}', 'students')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-icon" onclick="toggleUserStatus('${user.Email}', '${user.Status}', 'students')">
+                                <i class="fas ${user.Status === 'Active' ? 'fa-user-slash' : 'fa-user-check'}"></i>
+                            </button>
+                        </td>
+                    `;
+                } else {
+                    row.innerHTML = `
+                        <td>${user.AdminEmail}</td>
+                        <td>${user.AdminFName}</td>
+                        <td>${user.AdminLName}</td>
+                        <td><span class="badge ${user.Status === 'Active' ? 'badge-success' : 'badge-danger'}">${user.Status}</span></td>
+                        <td>
+                            <button class="btn-icon" onclick="editAdmin('${user.AdminID}', 'admins')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-icon" onclick="toggleAdminStatus('${user.AdminID}', '${user.Status}', 'admins')">
+                                <i class="fas ${user.Status === 'Active' ? 'fa-user-slash' : 'fa-user-check'}"></i>
+                            </button>
+                        </td>
+                    `;
+                }
+                
+                tableBody.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error filtering users:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: 'Failed to filter users. Please try again.',
+                icon: 'error',
+                confirmButtonColor: '#036d2b'
+            });
+        }
     }
 
     // Inventory Management Functions
@@ -2331,7 +2351,7 @@
             </div>
             </div>
         
-            <div class="tab-content" id="logo" style="display: block;">
+            <div class="tab-content" id="logo"  ">
         <h3>Update School Logo</h3>
         <div class="logo-upload-container">
             <div class="current-logo-preview">
