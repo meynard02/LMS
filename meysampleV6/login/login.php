@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Check admin table
-    $adminStmt = $conn->prepare("SELECT AdminID AS id, AdminPassword AS password, AdminFName, AdminLName, Status FROM admin WHERE AdminUsername = ?");
+    $adminStmt = $conn->prepare("SELECT AdminID AS id, AdminPassword AS password, AdminFName, AdminLName, Status, AdminEmail FROM admin WHERE AdminUsername = ?");
     $adminStmt->bind_param("s", $username);
     $adminStmt->execute();
     $adminResult = $adminStmt->get_result();
@@ -91,14 +91,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $errorMessage = "Your account is currently inactive.\nPlease contact us:\n\nEmail: $contactEmail\nPhone: $contactPhone";
                 header("Location: ../login/index.php?error=" . urlencode($errorMessage));
                 exit();
-}
+            }
             
-            $_SESSION['user_id'] = $adminRow['id'];
+            // Generate and send OTP
+            $otp = rand(100000, 999999);
+            $conn->query("UPDATE admin SET AdminOTP = '$otp' WHERE AdminID = {$adminRow['id']}");
+            
+            // Store admin ID in session for verification
+            $_SESSION['temp_admin_id'] = $adminRow['id'];
+            $_SESSION['admin_otp_verification'] = true;
+            $_SESSION['admin_email'] = $adminRow['AdminEmail'];
             $_SESSION['admin_fname'] = $adminRow['AdminFName'];
-            $_SESSION['admin_lname'] = $adminRow['AdminLName'];
-            $_SESSION['user_type'] = 'admin';
-            header("Location: ../admin/adminHP.php");
-            exit();
+            
+            // Send OTP email
+            $mail = new PHPMailer(true);
+            try {
+                $mail->isSMTP();
+                $mail->Host = 'smtp.gmail.com';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'spistlms@gmail.com';
+                $mail->Password = 'vcda bcuo xlyq rxiq';
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port = 587;
+
+                $mail->setFrom('spistlms@gmail.com', 'Admin OTP Verification');
+                $mail->addAddress($adminRow['AdminEmail']);
+                $mail->isHTML(true);
+                $mail->Subject = 'Your Admin Login OTP Code';
+                $mail->Body = "<p>Hi {$adminRow['AdminFName']},<br>Your admin login OTP code is <strong>$otp</strong>.</p>";
+
+                $mail->send();
+                header("Location: ../login/admin_login_otp.php");
+                exit();
+            } catch (Exception $e) {
+                header("Location: ../login/index.php?error=" . urlencode("OTP could not be sent. Please try again."));
+                exit();
+            }
         }
     }
 
