@@ -117,10 +117,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-  <img src="../photos/lmslogo.png" alt="lmslogo" class="lmslogo">
-  <div class="logochange">
-    <img src="../photos/logo.jpg" alt="Logo" class="logoslot">
-  </div>
+<div class="logofolder">  
+    <img src="../photos/lmslogo.png" alt="lmslogo" class="lmslogo">
+    <div class="logochange">
+      <img src="../photos/logo.jpg" alt="Logo" class="logoslot">
+    </div>
+  </div>  
   <div class="wrapper">
     <img src="../photos/logo.jpg" alt="Logo" class="logo">
     <form id="register-form" method="POST" action="register.php">
