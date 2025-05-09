@@ -12,9 +12,10 @@ try {
     $conditions = [];
     
     if (!empty($search)) {
-        $conditions[] = "AdminID = ?";
-        $params[] = $search;
-        $types .= "s";
+        $conditions[] = "(AdminEmail LIKE ? OR AdminFName LIKE ? OR AdminLName LIKE ?)";
+        $searchTerm = "%$search%";
+        $params = array_merge($params, [$searchTerm, $searchTerm, $searchTerm]);
+        $types .= "sss";
     }
     
     if ($status !== 'all') {
