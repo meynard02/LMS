@@ -165,7 +165,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       </div>
       
       <div class="terms">
-        <label><input type="checkbox" required> I agree to the terms and conditions</label>
+        <label>
+          <input type="checkbox" required>
+          I agree to the <span class="terms-text" id="showPrivacyPolicy">terms and conditions</span>
+        </label>
       </div>
       
       <button type="submit" class="btn">Register</button>
@@ -175,6 +178,87 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       </div>
     </form>
   </div>
+
+  <!-- Privacy Policy Modal -->
+  <div id="privacyModal" class="privacy-modal">
+    <div class="privacy-content">
+      <div class="privacy-header">
+        <h2>Privacy Policy & Terms of Service</h2>
+        <button class="privacy-close">&times;</button>
+      </div>
+      
+      <div class="privacy-section">
+        <h3><i class='bx bxs-shield'></i>Data Protection Compliance</h3>
+        <p>Our library management system is fully compliant with The Data Privacy Act of 2012 (DPA). We are committed to protecting your personal information and ensuring your privacy rights are respected.</p>
+      </div>
+
+      <div class="privacy-section">
+        <h3><i class='bx bxs-data'></i>Data Collection and Usage</h3>
+        <p>We collect and process the following information:</p>
+        <ul>
+          <li>Personal information (name, email address)</li>
+          <li>Academic information (student ID, course)</li>
+          <li>Library usage data (borrowed books, reading history)</li>
+        </ul>
+        <p>This information is used to:</p>
+        <ul>
+          <li>Manage your library account</li>
+          <li>Process book borrowing requests</li>
+          <li>Send important notifications</li>
+          <li>Improve our services</li>
+        </ul>
+      </div>
+
+      <div class="privacy-section">
+        <h3><i class='bx bxs-lock-alt'></i>Data Security</h3>
+        <p>We implement appropriate security measures to protect your data:</p>
+        <ul>
+          <li>Encryption of sensitive information</li>
+          <li>Secure data storage systems</li>
+          <li>Regular security audits</li>
+          <li>Access controls and authentication</li>
+        </ul>
+      </div>
+
+      <div class="privacy-section">
+        <h3><i class='bx bxs-user-check'></i>Your Rights</h3>
+        <p>Under the Data Privacy Act, you have the right to:</p>
+        <ul>
+          <li>Access your personal data</li>
+          <li>Correct inaccurate information</li>
+          <li>Request data deletion</li>
+          <li>Withdraw consent</li>
+          <li>File a complaint</li>
+        </ul>
+      </div>
+
+      
+    </div>
+  </div>
+
   <script src="../register/register.js"></script>
+  <script>
+    // Privacy Policy Modal Functionality
+    const privacyModal = document.getElementById('privacyModal');
+    const showPrivacyPolicy = document.getElementById('showPrivacyPolicy');
+    const privacyClose = document.querySelector('.privacy-close');
+
+    showPrivacyPolicy.addEventListener('click', () => {
+      privacyModal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    });
+
+    privacyClose.addEventListener('click', () => {
+      privacyModal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === privacyModal) {
+        privacyModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    });
+  </script>
 </body>
 </html>
